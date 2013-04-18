@@ -26,28 +26,26 @@ def compress(file_in_name):
 # fibonacci sequence. 
 # This builds upon the function from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
 
-def _encode_fib(n):
-    assert n >= 1
+def _encode_int(n):
+    n += 1
 
     # Return string with Fibonacci encoding for n (n >= 1).
-    result = ""
-    if n >= 1:
-        a = 1
-        b = 1
-        c = a + b   # next Fibonacci number
-        fibs = [b]  # list of Fibonacci numbers, starting with F(2), each <= n
-        while n >= c:
-            fibs.append(c)  # add next Fibonacci number to end of list
-            a = b
-            b = c
-            c = a + b
-#        result = "1"  # extra "1" at end
-        for fibnum in reversed(fibs):
-            if n >= fibnum:
-                n = n - fibnum
-                result = "1" + result
-            else:
-                result = "0" + result
+    a = 1
+    b = 1
+    c = a + b   # next Fibonacci number
+    fibs = [b]  # list of Fibonacci numbers, starting with F(2), each <= n
+    while n >= c:
+        fibs.append(c)  # add next Fibonacci number to end of list
+        a = b
+        b = c
+        c = a + b
+    result = "1"  # extra "1" at end
+    for fibnum in reversed(fibs):
+        if n >= fibnum:
+            n = n - fibnum
+            result = "1" + result
+        else:
+            result = "0" + result
     return result
 
 # decompress takes in a string of the file name to decompress 
