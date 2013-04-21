@@ -15,10 +15,12 @@ import unittest
 import helpers
 import io
 import subprocess
+import string
 
 READ_IN_SIZE = 1 
 ALG_NAME = "fib"
 BYTE_SIZE = 8
+TOO_MUCH = 100
     
 ###COMPRESS###
 
@@ -35,14 +37,14 @@ def compress(file_in_name):
     i = file_in.read(READ_IN_SIZE)
     
     while (i != ''):
-        enc = _encode_int(ord(i)) 
+        enc = _encode(ord(i)) 
         file_out.write(enc)
         i = file_in.read(READ_IN_SIZE)
         
     file_in.close(); 
     file_out.close();
     
-    subprocess.call(["./writer", file_out_name, file_out_name[:-1]])
+    subprocess.call(["./writer", file_out_name, file_out_name[:-1], "e"])
     
 '''for later        
         while(enc != ''): 
@@ -62,7 +64,7 @@ def compress(file_in_name):
         
             else : #leng + buffer_pos > BYTE_SIZE : 
                 (buffer, buffer_pos) = _update_buff(buffer, buffer_pos, enc, (BYTE_SIZE - buffer_pos))
-                file_out.write(bytes(buffer))
+fi                file_out.write(bytes(buffer))
                 buffer = 0x00
                 buffer_pos = 0
                 enc = enc[(BYTE_SIZE - buffer_pos):]
@@ -71,7 +73,7 @@ def compress(file_in_name):
 '''
 # encodes a single integer less than or equal to 1 into a fibonacci sequence. 
 # Note: this builds upon the algorithm from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
-def _encode_int(n):
+def _encode(n):
     n += 1
     # Return string with Fibonacci encoding for n (n >= 1).
     a = 1
@@ -108,15 +110,60 @@ def _update_buff(buffer, buffer_pos, enc, leng):
 # decompress takes in a string of the file name to decompress 
 # and outputs a decompressed file to disk 
 def decompress(file):
+  
+  #get the signature and creat the temporary file name
   (alg, new_file_name) = unsign(file); 
   tmp_name = new_file_name + "t"
 
-  if (alg != ALG_NAME) :
-    print ("Wrong compression algorithm. Expected " + ALG_NAME + ".")
-    return 1;  
+  #ensure that the compression algorithm was indeed fibonacci
+  assert(alg == ALG_NAME)
 
-  subprocess.call(["./reader", file, tmp_name])  
+  #convert binary file to string of 1's and 0's
+  subprocess.call(["./reader", file, tmp_name, "no"])  
   
   file_out = open(new_file_name, "w")
   file_in = open(tmp_name, "r") 
   
+  #get rid of the signature at the front
+  zero = 0 
+  counter = 0 
+  while(zero < 2) : 
+    if(counter > TOO_MUCH) : 
+        return "failure"
+    elif (file_in.read(READ_IN_SIZE) == 0x00) : 
+        zero += zero
+    counter += counter
+  
+  last = '0' 
+  c = file_in.read(READ_IN_SIZE)  
+  buffer = ""
+  
+  while (c != '') : 
+    if ((c == '1') and (last == '1')) : 
+        n = _decode(buffer)
+        #WRITE n TO DISK
+    else : 
+        buffer = buffer + c
+        last = c
+  
+  file_in.close()
+  file_out.close()
+
+def _decode(code):
+    assert(code[-2:] == "11")
+    
+    #initialize
+    a = 1 
+    b = 2 
+    n = 0
+    
+    #run
+    while (code != "1") : 
+        n += (int(code[:1]) * a)
+        tmp = a
+        a = b
+        b = tmp + b
+        code = code[1:]
+    
+    #return
+    return (n - 1)   

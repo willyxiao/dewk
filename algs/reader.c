@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h> 
 
 #define ZEROES 2
 #define TOO_MUCH 100
@@ -51,25 +52,33 @@ int main(int argc, char* argv[])
     int zeroes = 0; 
     int counter = 0; 
     char buffer; 
-        
-    while (zeroes < ZEROES && !feof(file_read))
+    
+    char* e = malloc(sizeof(char));
+    *e = 'e'; 
+
+    if(strncmp(argv[3], e, 1) == 0)
     {
-        if (counter < TOO_MUCH)
+        while (zeroes < ZEROES && !feof(file_read))
         {
-            buffer = fgetc(file_read); 
-            printf("%d\n", buffer); 
-            counter++; 
-            if(buffer == 0x00) zeroes++; 
-            fputc(buffer, file_write);
-        } 
-        else 
-        {
-            fclose(file_read);
-            fclose(file_write); 
-            printf("Wrong file type"); 
-            return 1; 
+            if (counter < TOO_MUCH)
+            {
+                buffer = fgetc(file_read); 
+                printf("%d\n", buffer); 
+                counter++; 
+                if(buffer == 0x00) zeroes++; 
+                fputc(buffer, file_write);
+            } 
+            else 
+            {
+                fclose(file_read);
+                fclose(file_write); 
+                printf("Wrong file type"); 
+                return 1; 
+            }
         }
     }
+    
+    free(e); 
 
     while(!feof(file_read))
     {

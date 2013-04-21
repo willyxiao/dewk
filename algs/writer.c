@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define ZEROES 2
 #define TOO_MUCH 100
@@ -23,9 +24,9 @@
 int main(int argc, char* argv[])
 {
     // check to ensure proper usage
-    if(argc != 3)
+    if(argc != 4)
     {
-        printf("Usage: Run FileInput FileOutput");
+        printf("Usage: Run FileInput FileOutput Mode");
         return 1;
     }
 
@@ -46,32 +47,40 @@ int main(int argc, char* argv[])
         fclose(file_read); 
         return 1; 
     }
-    
-    // copy the signature over
-    int zeroes = 0; 
-    int counter = 0; 
+
     char buffer; 
     char zero = 0x00; 
+    char* e = malloc(sizeof(char));
+    *e = 'e'; 
     
-    while (zeroes < ZEROES && !feof(file_read))
-    {
-        if (counter < TOO_MUCH)
+    if(strncmp(argv[3],e, 1) == 0)
+    {    
+        // copy the signature over
+        int zeroes = 0; 
+        int counter = 0; 
+        
+        while (zeroes < ZEROES && !feof(file_read))
         {
-            buffer = fgetc(file_read); 
-            //printf("%d\n", buffer); 
-            counter++; 
-            if(buffer == 0x00) zeroes++; 
-            fputc(buffer, file_write);
-        } 
-        else 
-        {
-            fclose(file_read);
-            fclose(file_write); 
-            printf("Wrong file type"); 
-            return 1; 
+            if (counter < TOO_MUCH)
+            {
+                buffer = fgetc(file_read); 
+                //printf("%d\n", buffer); 
+                counter++; 
+                if(buffer == 0x00) zeroes++; 
+                fputc(buffer, file_write);
+            } 
+            else 
+            {
+                fclose(file_read);
+                fclose(file_write); 
+                printf("Wrong file type"); 
+                return 1; 
+            }
         }
     }
-
+    
+    free(e); 
+    
     char write_buffer = zero; 
     
     while(!feof(file_read))
@@ -111,6 +120,6 @@ int main(int argc, char* argv[])
     
     fclose(file_write); 
     fclose(file_read);  
-//    remove(argv[1]);    
+    remove(argv[1]);    
 }    
 
