@@ -16,6 +16,7 @@ import helpers
 import io
 import subprocess
 import string
+import os
 
 READ_IN_SIZE = 1 
 ALG_NAME = "fib"
@@ -112,16 +113,17 @@ def _update_buff(buffer, buffer_pos, enc, leng):
 def decompress(file):
   
   #get the signature and creat the temporary file name
-  (alg, new_file_name) = unsign(file); 
-  tmp_name = new_file_name + "t"
+  (alg, new_file_name) = helpers.unsign(file); 
+  tmp_name = helpers.free_name(new_file_name + ".t")
+  tmp_name2 = helpers.free_name(tmp_name + "t")
 
   #ensure that the compression algorithm was indeed fibonacci
   assert(alg == ALG_NAME)
 
   #convert binary file to string of 1's and 0's
-  subprocess.call(["./reader", file, tmp_name, "no"])  
+  subprocess.call(["./reader", file, tmp_name, "e"])  
   
-  file_out = open(new_file_name, "w")
+  file_out = open(tmp_name2, "w")
   file_in = open(tmp_name, "r") 
   
   #get rid of the signature at the front
@@ -130,24 +132,35 @@ def decompress(file):
   while(zero < 2) : 
     if(counter > TOO_MUCH) : 
         return "failure"
-    elif (file_in.read(READ_IN_SIZE) == 0x00) : 
-        zero += zero
-    counter += counter
+    elif (file_in.read(READ_IN_SIZE) == bytearray(1)) : 
+        zero += 1
+    counter += 1
   
   last = '0' 
   c = file_in.read(READ_IN_SIZE)  
   buffer = ""
   
   while (c != '') : 
+    buffer = buffer + c    
     if ((c == '1') and (last == '1')) : 
         n = _decode(buffer)
-        #WRITE n TO DISK
+        assert(n < (2 ** (BYTE_SIZE * READ_IN_SIZE)))
+        b = bin(n)[2:]
+        while(len(b) < BYTE_SIZE) : 
+            b = '0' + b
+        file_out.write(b)
+        buffer = ""
+        last = '0'
     else : 
-        buffer = buffer + c
         last = c
+    c = file_in.read(READ_IN_SIZE)    
   
   file_in.close()
   file_out.close()
+  
+  subprocess.call(["./writer", tmp_name2, new_file_name, "no"])
+  subprocess.call(["rm", "-f", tmp_name2])
+  subprocess.call(["rm", "-f", tmp_name])
 
 def _decode(code):
     assert(code[-2:] == "11")

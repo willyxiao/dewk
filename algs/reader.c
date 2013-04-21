@@ -24,9 +24,9 @@
 int main(int argc, char* argv[])
 {
     // check to ensure proper usage
-    if(argc != 3)
+    if(argc != 4)
     {
-        printf("Usage: Run FileInput FileOutput");
+        printf("Usage: Run FileInput FileOutput Mode\n");
         return 1;
     }
 

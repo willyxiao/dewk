@@ -9,6 +9,7 @@ helpers.py is a module that includes helper functions for encoding.
 Also helps standardize everything. 
 """
 import string
+import os
 
 ZERO = bytearray(1)
 GIVE_UP = 100
@@ -28,7 +29,7 @@ def ensign(file_name, alg_name) :
     
     name = file_name[:type_index] + "." + alg_name + "t"
 
-    return (name, sign)
+    return (free_name(name), sign)
 
 #get types takes in a compressed file and returns
 #[name of the compresson algorithm, name of extension]
@@ -66,12 +67,17 @@ def unsign(file_name) :
             # new file name
             period_at = string.rfind(file_name, "."); 
             
-            new_file_name = file_name[:period_at] + extension_name
+            new_file_name = file_name[:period_at] + "." + extension_name
 
-            return (alg_name, new_file_name)
+            return (alg_name, free_name(new_file_name))
         
     except IOError : 
         print ("Error opening " + file_name); 
         file.close();     
 
-
+def free_name(name) : 
+    c = 0 
+    while(os.path.exists(name)) : 
+        name = name + str(c)
+        c += 1
+    return name
