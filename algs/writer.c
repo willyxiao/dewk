@@ -1,10 +1,10 @@
 /************************************************************
 *
-* huff.c
+* writer.c
 * 
 * Willy Xiao
 *
-* Compresses a file using huffman
+* converts a compressed algorithm with strings of 1's and 0's to bytes
 * 
 *************************************************************/
 #include <stdio.h>
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
         if (counter < TOO_MUCH)
         {
             buffer = fgetc(file_read); 
-            printf("%d\n", buffer); 
+            //printf("%d\n", buffer); 
             counter++; 
             if(buffer == 0x00) zeroes++; 
             fputc(buffer, file_write);
@@ -81,17 +81,17 @@ int main(int argc, char* argv[])
             buffer = fgetc(file_read);
             if (buffer == EOF)
             {
-                printf("Read end of file \n"); 
+                //printf("Read end of file \n"); 
                 break;
             }            
             else if (buffer == '1') 
             {
-                printf("Read a one\n");
-                write_buffer = write_buffer | (1 << (BYTE_SIZE - i));
+                //printf("Read a one\n");
+                write_buffer = write_buffer | (1 << (BYTE_SIZE - (i + 1)));
             }
             else if (buffer == '0')
             {
-                printf("Read a zero\n"); 
+                //printf("Read a zero\n"); 
                 // do nothing
             }
             else
@@ -103,13 +103,14 @@ int main(int argc, char* argv[])
                 return 1; 
             }    
         }
-        printf("%c", write_buffer); 
+
+        //printf("%c", write_buffer); 
         fputc(write_buffer, file_write);
         write_buffer = zero;  
     }
     
     fclose(file_write); 
     fclose(file_read);  
-    remove(argv[1]);    
+//    remove(argv[1]);    
 }    
 

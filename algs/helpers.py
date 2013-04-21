@@ -62,8 +62,13 @@ def unsign(file_name) :
                 if counter > GIVE_UP :
                     raise IncorrectFileType
                     break
+            
+            # new file name
+            period_at = string.rfind(file_name, "."); 
+            
+            new_file_name = file_name[:period_at] + extension_name
 
-        return (alg_name, extension_name)
+            return (alg_name, new_file_name)
         
     except IOError : 
         print ("Error opening " + file_name); 

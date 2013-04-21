@@ -19,20 +19,12 @@ import subprocess
 READ_IN_SIZE = 1 
 ALG_NAME = "fib"
 BYTE_SIZE = 8
-
-global buffer
-buffer = 0x00
-
-global buffer_pos
-buffer_pos = 0 
     
 ###COMPRESS###
 
 # compress takes in a string of the file name to compress 
 # and outputs a compressed file to disk
 def compress(file_in_name):
-    global buffer
-    global buffer_pos
 
     # opens output file and signs it 
     (file_out_name, sign) = helpers.ensign(file_in_name, ALG_NAME)  
@@ -99,7 +91,9 @@ def _encode_int(n):
         else:
             result = "0" + result
     return result
+
 '''
+might not need
 def _update_buff(buffer, buffer_pos, enc, leng):
     j = 0
     while (j < leng) : 
@@ -108,9 +102,21 @@ def _update_buff(buffer, buffer_pos, enc, leng):
         buffer_pos += leng
     return (buffer, buffer_pos)
 '''
+
 ###DECOMPRESS###
 
 # decompress takes in a string of the file name to decompress 
 # and outputs a decompressed file to disk 
 def decompress(file):
-  print file;
+  (alg, new_file_name) = unsign(file); 
+  tmp_name = new_file_name + "t"
+
+  if (alg != ALG_NAME) :
+    print ("Wrong compression algorithm. Expected " + ALG_NAME + ".")
+    return 1;  
+
+  subprocess.call(["./reader", file, tmp_name])  
+  
+  file_out = open(new_file_name, "w")
+  file_in = open(tmp_name, "r") 
+  
