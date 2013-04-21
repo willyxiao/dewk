@@ -26,7 +26,7 @@ def ensign(file_name, alg_name) :
     
     sign = alg_name + ZERO + extension + ZERO
     
-    name = file_name[:type_index] + "." + alg_name
+    name = file_name[:type_index] + "." + alg_name + "t"
 
     return (name, sign)
 

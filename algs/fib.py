@@ -14,6 +14,7 @@ fib.py is a module that implements the fibonacci coding compression:
 import unittest 
 import helpers
 import io
+import subprocess
 
 READ_IN_SIZE = 1 
 ALG_NAME = "fib"
@@ -43,9 +44,17 @@ def compress(file_in_name):
     
     while (i != ''):
         enc = _encode_int(ord(i)) 
+        file_out.write(enc)
+        i = file_in.read(READ_IN_SIZE)
+        
+    file_in.close(); 
+    file_out.close();
     
+    subprocess.call(["./writer", file_out_name, file_out_name[:-1]])
+    
+'''for later        
         while(enc != ''): 
-            print enc
+            #print enc
             leng = len(enc)
             
             if (leng + buffer_pos) < BYTE_SIZE : 
@@ -54,23 +63,20 @@ def compress(file_in_name):
                             
             elif (leng + buffer_pos) == BYTE_SIZE : 
                 (buffer, buffer_pos) = _update_buff(buffer, buffer_pos, enc, leng)
-                file_out.write(unichr(buffer))
+                file_out.write(bytes(buffer))
                 buffer = 0x00
                 buffer_pos = 0 
                 enc = ''
         
             else : #leng + buffer_pos > BYTE_SIZE : 
                 (buffer, buffer_pos) = _update_buff(buffer, buffer_pos, enc, (BYTE_SIZE - buffer_pos))
-                file_out.write(unichr(buffer))
+                file_out.write(bytes(buffer))
                 buffer = 0x00
                 buffer_pos = 0
                 enc = enc[(BYTE_SIZE - buffer_pos):]
     
         i = file_in.read(READ_IN_SIZE)
-
-    file_in.close(); 
-    file_out.close();
-
+'''
 # encodes a single integer less than or equal to 1 into a fibonacci sequence. 
 # Note: this builds upon the algorithm from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
 def _encode_int(n):
@@ -93,7 +99,7 @@ def _encode_int(n):
         else:
             result = "0" + result
     return result
-
+'''
 def _update_buff(buffer, buffer_pos, enc, leng):
     j = 0
     while (j < leng) : 
@@ -101,7 +107,7 @@ def _update_buff(buffer, buffer_pos, enc, leng):
         j += 1
         buffer_pos += leng
     return (buffer, buffer_pos)
-
+'''
 ###DECOMPRESS###
 
 # decompress takes in a string of the file name to decompress 
