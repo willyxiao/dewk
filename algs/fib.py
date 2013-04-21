@@ -159,8 +159,7 @@ def decompress(file):
   file_out.close()
   
   subprocess.call(["./writer", tmp_name2, new_file_name, "no"])
-  subprocess.call(["rm", "-f", tmp_name2])
-  subprocess.call(["rm", "-f", tmp_name])
+  #subprocess.call(["rm", "-f", tmp_name])
 
 def _decode(code):
     assert(code[-2:] == "11")

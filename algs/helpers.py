@@ -77,7 +77,9 @@ def unsign(file_name) :
 
 def free_name(name) : 
     c = 0 
-    while(os.path.exists(name)) : 
-        name = name + str(c)
+    new_name = name; 
+    while(os.path.exists(new_name)) : 
+        type_index = string.rfind(name, ".")
+        new_name = name[:type_index] + str(c) + name[type_index:]
         c += 1
-    return name
+    return new_name

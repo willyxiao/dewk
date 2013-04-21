@@ -90,6 +90,7 @@ int main(int argc, char* argv[])
             buffer = fgetc(file_read);
             if (buffer == EOF)
             {
+                printf("Done writing to file...\n");
                 //printf("Read end of file \n"); 
                 break;
             }            
@@ -120,6 +121,5 @@ int main(int argc, char* argv[])
     
     fclose(file_write); 
     fclose(file_read);  
-    remove(argv[1]);    
 }    
 

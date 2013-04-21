@@ -63,7 +63,6 @@ int main(int argc, char* argv[])
             if (counter < TOO_MUCH)
             {
                 buffer = fgetc(file_read); 
-                printf("%d\n", buffer); 
                 counter++; 
                 if(buffer == 0x00) zeroes++; 
                 fputc(buffer, file_write);
@@ -80,13 +79,13 @@ int main(int argc, char* argv[])
     
     free(e); 
 
-    while(!feof(file_read))
+    while(buffer != EOF)
     {
         buffer = fgetc(file_read);
         
         if (buffer == EOF)
         {
-            //printf("Read end of file \n"); 
+            printf("Done reading to file...\n");
             break;
         }
 
