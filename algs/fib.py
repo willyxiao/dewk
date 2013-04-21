@@ -42,40 +42,35 @@ def compress(file_in_name):
     i = file_in.read(READ_IN_SIZE)
     
     while (i != ''):
-        enc = _encode_int(ord(i))
-        leng = len(enc) 
-        
-        if (leng + buffer_pos) < BYTE_SIZE :            
-            j = 0
-            while (j < leng) : 
-                buffer = buffer | (int(enc[j]) << (leng - (j + 1)))
-                j += 1
-                buffer_pos += leng
+        enc = _encode_int(ord(i)) 
+    
+        while(enc != ''): 
+            print enc
+            leng = len(enc)
             
-        elif (leng + buffer_pos) == BYTE_SIZE : 
-            j = 0 
-            while (j < leng) : 
-                buffer = buffer | (int(enc[j]) << (leng - (j + 1)))
-                j += 1
-            file_out.write(unichr(buffer))
-            buffer = 0x00
-            buffer_pos = 0
+            if (leng + buffer_pos) < BYTE_SIZE : 
+                (buffer, buffer_pos) = _update_buff(buffer, buffer_pos, enc, leng)
+                enc = ''
+                            
+            elif (leng + buffer_pos) == BYTE_SIZE : 
+                (buffer, buffer_pos) = _update_buff(buffer, buffer_pos, enc, leng)
+                file_out.write(unichr(buffer))
+                buffer = 0x00
+                buffer_pos = 0 
+                enc = ''
         
-        else : #leng + buffer_pos > BYTE_SIZE : 
-            j = 0 
-            while (j < (BYTE_SIZE - buffer_pos)) : 
-                buffer = buffer | (int(enc[j]) << ((BYTE_SIZE - buffer_pos) - (j + 1)))
-                j += 1
-            file_out.write(unichr(buffer))
-            buffer = 0x00
-            buffer_pos = 0
+            else : #leng + buffer_pos > BYTE_SIZE : 
+                (buffer, buffer_pos) = _update_buff(buffer, buffer_pos, enc, (BYTE_SIZE - buffer_pos))
+                file_out.write(unichr(buffer))
+                buffer = 0x00
+                buffer_pos = 0
+                enc = enc[(BYTE_SIZE - buffer_pos):]
     
         i = file_in.read(READ_IN_SIZE)
 
     file_in.close(); 
     file_out.close();
 
-        
 # encodes a single integer less than or equal to 1 into a fibonacci sequence. 
 # Note: this builds upon the algorithm from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
 def _encode_int(n):
@@ -98,7 +93,15 @@ def _encode_int(n):
         else:
             result = "0" + result
     return result
-    
+
+def _update_buff(buffer, buffer_pos, enc, leng):
+    j = 0
+    while (j < leng) : 
+        buffer = buffer | (int(enc[j]) << (leng - (j + 1)))
+        j += 1
+        buffer_pos += leng
+    return (buffer, buffer_pos)
+
 ###DECOMPRESS###
 
 # decompress takes in a string of the file name to decompress 

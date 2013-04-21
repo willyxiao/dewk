@@ -9,7 +9,6 @@ helpers.py is a module that includes helper functions for encoding.
 Also helps standardize everything. 
 """
 import string
-import globals
 
 ZERO = bytearray(1)
 GIVE_UP = 100
