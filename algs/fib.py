@@ -12,23 +12,35 @@ fib.py is a module that implements the fibonacci coding compression:
 2. fib.decompress takes in a file outputting FileName.FileType to disk. 
 """
 import unittest 
+import helpers
+
+READ_IN_SIZE = 1 
+ALG_NAME = "fib"
+
+###COMPRESS###
 
 # compress takes in a string of the file name to compress 
 # and outputs a compressed file to disk
 def compress(file_in_name):
+
   file_in = open(file_in_name, "r")
-  while (str != EOF) : 
-    str = file_in.read(1) 
-    print (str);
+  
+  i = file_in.read(READ_IN_SIZE)
+  
+  while (i != ''):
+                
+  
+
   file_in.close(); 
 
-# helper function which encodes a single integer less than or equal to 1 into a 
-# fibonacci sequence. 
-# This builds upon the function from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
 
+# returns the beginning of the file_type
+
+
+# encodes a single integer less than or equal to 1 into a fibonacci sequence. 
+# Note: this builds upon the algorithm from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
 def _encode_int(n):
     n += 1
-
     # Return string with Fibonacci encoding for n (n >= 1).
     a = 1
     b = 1
@@ -47,6 +59,8 @@ def _encode_int(n):
         else:
             result = "0" + result
     return result
+    
+###DECOMPRESS###
 
 # decompress takes in a string of the file name to decompress 
 # and outputs a decompressed file to disk 
