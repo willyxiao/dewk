@@ -1,0 +1,21 @@
+Problem Set 7: OMG Cows
+
+This problem set is due Friday, April 19th at 5:00pm EST.
+Table of Contents
+
+    Part 1: Simple Objects
+    Part 2: Movement
+    Part 3: Actions
+    Part 4: Aging
+    Part 5: Smart Bees
+    Part 6: Custom Events
+
+Getting the code and setting up
+
+Like all previous psets, fetch the code for this problem set by executing:
+
+git pull git@code.seas.harvard.edu:cs51-psets/cs51-psets.git master
+
+Important: In order to run this problem set's code, you will have to install the OCaml Graphics module. On the appliance, you can do this by running:
+
+curl http://cs51.seas.harvard.edu/graphics.sh | bash

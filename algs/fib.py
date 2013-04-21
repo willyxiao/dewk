@@ -38,11 +38,10 @@ def compress(file_in_name):
     file_out = io.open(file_out_name, "wb") 
     file_out.write(sign)
         
-    file_in = io.open(file_in_name, "r")
+    file_in = io.FileIO(file_in_name, "r")
     i = file_in.read(READ_IN_SIZE)
     
     while (i != ''):
-    
         enc = _encode_int(ord(i))
         leng = len(enc) 
         
@@ -51,30 +50,32 @@ def compress(file_in_name):
             while (j < leng) : 
                 buffer = buffer | (int(enc[j]) << (leng - (j + 1)))
                 j += 1
+                buffer_pos += leng
             
         elif (leng + buffer_pos) == BYTE_SIZE : 
             j = 0 
             while (j < leng) : 
                 buffer = buffer | (int(enc[j]) << (leng - (j + 1)))
                 j += 1
-            file_out.write(buffer)
+            file_out.write(unichr(buffer))
             buffer = 0x00
+            buffer_pos = 0
         
         else : #leng + buffer_pos > BYTE_SIZE : 
             j = 0 
             while (j < (BYTE_SIZE - buffer_pos)) : 
                 buffer = buffer | (int(enc[j]) << ((BYTE_SIZE - buffer_pos) - (j + 1)))
                 j += 1
-            file_out.write(buffer)
+            file_out.write(unichr(buffer))
             buffer = 0x00
+            buffer_pos = 0
     
-        buffer_pos += (leng % BYTE_SIZE)     
         i = file_in.read(READ_IN_SIZE)
 
     file_in.close(); 
     file_out.close();
 
-
+        
 # encodes a single integer less than or equal to 1 into a fibonacci sequence. 
 # Note: this builds upon the algorithm from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
 def _encode_int(n):
