@@ -76,8 +76,7 @@ def unsign(file_name) :
             return (alg_name, free_name(new_file_name))
         
     except IOError : 
-        print ("Error opening " + file_name); 
-        file.close();     
+        print ("Error opening " + file_name);     
 
 # start_compress returns a file that python can read from and another it can write to
 def start_compress(file_in_name, alg_name) : 
