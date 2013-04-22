@@ -10,9 +10,12 @@ Also helps standardize everything.
 """
 import string
 import os
+import subprocess
+import io
 
 ZERO = bytearray(1)
-GIVE_UP = 100
+TOO_MUCH = 100
+READ_IN_SIZE = 1
 
 # the signature at the beginning of each compressed file. 
 # This consists of the name of the algorithm, followed by zero byte followed by old extension followed by zero
@@ -49,7 +52,7 @@ def unsign(file_name) :
 
                 # this checks if counter goes over the amount before giving up
                 counter += counter
-                if counter > GIVE_UP :
+                if counter > TOO_MUCH :
                     raise IncorrectFileType
                     break
     
@@ -60,7 +63,7 @@ def unsign(file_name) :
                 i = file.read(1)
 
                 counter += counter
-                if counter > GIVE_UP :
+                if counter > TOO_MUCH :
                     raise IncorrectFileType
                     break
             
@@ -74,6 +77,53 @@ def unsign(file_name) :
     except IOError : 
         print ("Error opening " + file_name); 
         file.close();     
+
+def start_compress(file_in_name, alg_name) : 
+    (file_out_name, sign) = ensign(file_in_name, alg_name)  
+    file_out = io.open(file_out_name, "wb") 
+    file_out.write(sign)
+    file_in = io.FileIO(file_in_name, "r")
+    return (file_in,file_out)
+
+def end_compress(file_in,file_out) : 
+    file_in.close()
+    file_out.close()
+    subprocess.call(["./writer", file_out.name, file_out.name[:-1], "e"])
+    subprocess.call(["rm", "-f", file_out.name])
+
+def start_decompress(file_name, alg_name) : 
+  #get the signature and creat the temporary file name
+  (alg, new_file_name) = unsign(file_name); 
+  tmp_name = free_name(new_file_name + ".t")
+  tmp_name2 = free_name(tmp_name + "t")
+
+  #ensure that the compression algorithm was indeed fibonacci
+  assert(alg == alg_name)
+
+  #convert binary file to string of 1's and 0's
+  subprocess.call(["./reader", file_name, tmp_name, "e"])  
+  
+  file_out = open(tmp_name2, "w")
+  file_in = open(tmp_name, "r") 
+  
+  #get rid of the signature at the front
+  zero = 0 
+  counter = 0 
+  while(zero < 2) : 
+    if(counter > TOO_MUCH) : 
+        return "failure"
+    elif (file_in.read(READ_IN_SIZE) == bytearray(1)) : 
+        zero += 1
+    counter += 1
+
+  return (file_in, file_out, new_file_name)
+
+def end_decompress(file_in, file_out, new_file_name) :   
+    file_in.close()
+    file_out.close()
+    subprocess.call(["./writer", file_out.name, new_file_name, "no"])
+    subprocess.call(["rm", "-f", file_out.name])
+    subprocess.call(["rm", "-f", file_in.name])
 
 def free_name(name) : 
     c = 0 

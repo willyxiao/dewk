@@ -28,13 +28,9 @@ TOO_MUCH = 100
 # compress takes in a string of the file name to compress 
 # and outputs a compressed file to disk
 def compress(file_in_name):
-
-    # opens output file and signs it 
-    (file_out_name, sign) = helpers.ensign(file_in_name, ALG_NAME)  
-    file_out = io.open(file_out_name, "wb") 
-    file_out.write(sign)
-        
-    file_in = io.FileIO(file_in_name, "r")
+     
+    (file_in,file_out) = helpers.start_compress(file_in_name, ALG_NAME)
+    
     i = file_in.read(READ_IN_SIZE)
     
     while (i != ''):
@@ -42,37 +38,8 @@ def compress(file_in_name):
         file_out.write(enc)
         i = file_in.read(READ_IN_SIZE)
         
-    file_in.close(); 
-    file_out.close();
+    helpers.end_compress(file_in,file_out)
     
-    subprocess.call(["./writer", file_out_name, file_out_name[:-1], "e"])
-    subprocess.call(["rm", "-f", file_out_name])
-    
-'''for later        
-        while(enc != ''): 
-            #print enc
-            leng = len(enc)
-            
-            if (leng + buffer_pos) < BYTE_SIZE : 
-                (buffer, buffer_pos) = _update_buff(buffer, buffer_pos, enc, leng)
-                enc = ''
-                            
-            elif (leng + buffer_pos) == BYTE_SIZE : 
-                (buffer, buffer_pos) = _update_buff(buffer, buffer_pos, enc, leng)
-                file_out.write(bytes(buffer))
-                buffer = 0x00
-                buffer_pos = 0 
-                enc = ''
-        
-            else : #leng + buffer_pos > BYTE_SIZE : 
-                (buffer, buffer_pos) = _update_buff(buffer, buffer_pos, enc, (BYTE_SIZE - buffer_pos))
-fi                file_out.write(bytes(buffer))
-                buffer = 0x00
-                buffer_pos = 0
-                enc = enc[(BYTE_SIZE - buffer_pos):]
-    
-        i = file_in.read(READ_IN_SIZE)
-'''
 # encodes a single integer less than or equal to 1 into a fibonacci sequence. 
 # Note: this builds upon the algorithm from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
 def _encode(n):
@@ -96,73 +63,35 @@ def _encode(n):
             result = "0" + result
     return result
 
-'''
-might not need
-def _update_buff(buffer, buffer_pos, enc, leng):
-    j = 0
-    while (j < leng) : 
-        buffer = buffer | (int(enc[j]) << (leng - (j + 1)))
-        j += 1
-        buffer_pos += leng
-    return (buffer, buffer_pos)
-'''
-
 ###DECOMPRESS###
 
 # decompress takes in a string of the file name to decompress 
 # and outputs a decompressed file to disk 
-def decompress(file):
-  
-  #get the signature and creat the temporary file name
-  (alg, new_file_name) = helpers.unsign(file); 
-  tmp_name = helpers.free_name(new_file_name + ".t")
-  tmp_name2 = helpers.free_name(tmp_name + "t")
+def decompress(file_name):
 
-  #ensure that the compression algorithm was indeed fibonacci
-  assert(alg == ALG_NAME)
+    (file_in, file_out, new_file_name) = helpers.start_decompress(file_name, ALG_NAME)  
 
-  #convert binary file to string of 1's and 0's
-  subprocess.call(["./reader", file, tmp_name, "e"])  
+    last = '0' 
+    c = file_in.read(READ_IN_SIZE)  
+    buffer = ""
   
-  file_out = open(tmp_name2, "w")
-  file_in = open(tmp_name, "r") 
+    while (c != '') : 
+        buffer = buffer + c    
+        if ((c == '1') and (last == '1')) : 
+            n = _decode(buffer)
+            assert(n < (2 ** (BYTE_SIZE * READ_IN_SIZE)))
+            b = bin(n)[2:]
+            while(len(b) < BYTE_SIZE) : 
+                b = '0' + b
+            file_out.write(b)
+            buffer = ""
+            last = '0'
+        else : 
+            last = c
+        c = file_in.read(READ_IN_SIZE)    
   
-  #get rid of the signature at the front
-  zero = 0 
-  counter = 0 
-  while(zero < 2) : 
-    if(counter > TOO_MUCH) : 
-        return "failure"
-    elif (file_in.read(READ_IN_SIZE) == bytearray(1)) : 
-        zero += 1
-    counter += 1
+    helpers.end_decompress(file_in, file_out, new_file_name) 
   
-  last = '0' 
-  c = file_in.read(READ_IN_SIZE)  
-  buffer = ""
-  
-  while (c != '') : 
-    buffer = buffer + c    
-    if ((c == '1') and (last == '1')) : 
-        n = _decode(buffer)
-        assert(n < (2 ** (BYTE_SIZE * READ_IN_SIZE)))
-        b = bin(n)[2:]
-        while(len(b) < BYTE_SIZE) : 
-            b = '0' + b
-        file_out.write(b)
-        buffer = ""
-        last = '0'
-    else : 
-        last = c
-    c = file_in.read(READ_IN_SIZE)    
-  
-  file_in.close()
-  file_out.close()
-  
-  subprocess.call(["./writer", tmp_name2, new_file_name, "no"])
-  subprocess.call(["rm", "-f", tmp_name2])
-  subprocess.call(["rm", "-f", tmp_name])
-
 def _decode(code):
     assert(code[-2:] == "11")
     
