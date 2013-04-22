@@ -17,25 +17,26 @@ ZERO = bytearray(1)
 TOO_MUCH = 100
 READ_IN_SIZE = 1
 
-# the signature at the beginning of each compressed file. 
-# This consists of the name of the algorithm, followed by zero byte followed by old extension followed by zero
+# ensign(file_name, alg_name) returns the signature for the algorithm and file type, and a new file name
 def ensign(file_name, alg_name) : 
-    type_index = string.rfind(file_name, "."); 
 
-    # uncompressed file type extension
+    # the extension (e.g. "picture.jpg" becomes jpg)
+    type_index = string.rfind(file_name, "."); 
     if type_index == -1 : 
         extension = ""
     else : 
         extension = file_name[(type_index + 1):]
     
+    # signature is returned
     sign = alg_name + ZERO + extension + ZERO
     
+    # the name of the new file is given 
     name = file_name[:type_index] + "." + alg_name + "t"
 
     return (free_name(name), sign)
 
-#get types takes in a compressed file and returns
-#[name of the compresson algorithm, name of extension]
+# unsign(file_name) returns the compression algorithm used and a name of an
+# uncompressed file that can be saved to disk
 def unsign(file_name) : 
     try: 
         with open(file_name, "r") as file :     
