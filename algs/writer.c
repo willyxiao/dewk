@@ -48,8 +48,8 @@ int main(int argc, char* argv[])
         return 1; 
     }
 
-    char buffer; 
-    char zero = 0x00; 
+    int buffer; 
+    uint8_t zero = 0x00; 
     char* e = malloc(sizeof(char));
     *e = 'e'; 
     
@@ -64,7 +64,6 @@ int main(int argc, char* argv[])
             if (counter < TOO_MUCH)
             {
                 buffer = fgetc(file_read); 
-                //printf("%d\n", buffer); 
                 counter++; 
                 if(buffer == 0x00) zeroes++; 
                 fputc(buffer, file_write);
@@ -81,8 +80,9 @@ int main(int argc, char* argv[])
     
     free(e); 
     
-    char write_buffer = zero; 
-    
+    uint8_t write_buffer = zero; 
+    int just_wrote = 0; 
+        
     while(!feof(file_read))
     {
         for(int i = 0; i < BYTE_SIZE; i++)
@@ -90,18 +90,21 @@ int main(int argc, char* argv[])
             buffer = fgetc(file_read);
             if (buffer == EOF)
             {
-                printf("Done writing to file...\n");
-                //printf("Read end of file \n"); 
-                break;
+                if(just_wrote != 1)
+                {
+                    fputc(write_buffer, file_write); 
+                }
+    
+                fclose(file_write); 
+                fclose(file_read);  
+                return 0;
             }            
             else if (buffer == '1') 
             {
-                //printf("Read a one\n");
                 write_buffer = write_buffer | (1 << (BYTE_SIZE - (i + 1)));
             }
             else if (buffer == '0')
             {
-                //printf("Read a zero\n"); 
                 // do nothing
             }
             else
@@ -111,15 +114,14 @@ int main(int argc, char* argv[])
                 fclose(file_write); 
                 printf("Something went wrong..."); 
                 return 1; 
-            }    
+            }
+
+            just_wrote = 0;     
         }
 
-        //printf("%c", write_buffer); 
         fputc(write_buffer, file_write);
         write_buffer = zero;  
+        just_wrote = 1; 
     }
-    
-    fclose(file_write); 
-    fclose(file_read);  
 }    
 

@@ -46,6 +46,7 @@ def compress(file_in_name):
     file_out.close();
     
     subprocess.call(["./writer", file_out_name, file_out_name[:-1], "e"])
+    subprocess.call(["rm", "-f", file_out_name])
     
 '''for later        
         while(enc != ''): 
@@ -159,7 +160,8 @@ def decompress(file):
   file_out.close()
   
   subprocess.call(["./writer", tmp_name2, new_file_name, "no"])
-  #subprocess.call(["rm", "-f", tmp_name])
+  subprocess.call(["rm", "-f", tmp_name2])
+  subprocess.call(["rm", "-f", tmp_name])
 
 def _decode(code):
     assert(code[-2:] == "11")
@@ -179,3 +181,19 @@ def _decode(code):
     
     #return
     return (n - 1)   
+
+def test () : 
+    compress("../tests/001.jpg")
+    decompress("../tests/001.fib")
+    compress("../tests/canon.mid")
+    decompress("../tests/canon.fib")
+    compress("../tests/ps7.txt")
+    decompress("../tests/ps7.fib")
+ 
+def del_tests () : 
+    subprocess.call(["rm", "-f", "../tests/001.fib"])
+    subprocess.call(["rm", "-f", "../tests/0010.jpg"])
+    subprocess.call(["rm", "-f", "../tests/canon.fib"])
+    subprocess.call(["rm", "-f", "../tests/canon0.mid"])
+    subprocess.call(["rm", "-f", "../tests/ps7.fib"])
+    subprocess.call(["rm", "-f", "../tests/ps70.txt"])
