@@ -51,7 +51,8 @@ int main(int argc, char* argv[])
     // copy the signature over
     int zeroes = 0; 
     int counter = 0; 
-    char buffer; 
+    int buffer; 
+    uint8_t buff; 
     
     char* e = malloc(sizeof(char));
     *e = 'e'; 
@@ -63,7 +64,6 @@ int main(int argc, char* argv[])
             if (counter < TOO_MUCH)
             {
                 buffer = fgetc(file_read); 
-                printf("%d\n", buffer); 
                 counter++; 
                 if(buffer == 0x00) zeroes++; 
                 fputc(buffer, file_write);
@@ -83,16 +83,17 @@ int main(int argc, char* argv[])
     while(!feof(file_read))
     {
         buffer = fgetc(file_read);
-        
+                
         if (buffer == EOF)
         {
-            //printf("Read end of file \n"); 
             break;
         }
 
+        buff = buffer; 
+        
         for(int i = 0; i < BYTE_SIZE; i++)
         {
-            if (buffer & (1 << (BYTE_SIZE - (i + 1))))
+            if (buff & (1 << (BYTE_SIZE - (i + 1))))
             {
                 fputc('1', file_write); 
             }
