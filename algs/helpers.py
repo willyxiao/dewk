@@ -44,9 +44,9 @@ def unsign(file_name) :
             counter = 0 
             alg_name = "" 
             extension_name = ""
-        
+
             # for the name of the algorithm
-            i = file.read(1) 
+            i = file.read(1)
             while i != ZERO : 
                 alg_name += i 
                 i = file.read(1)
@@ -79,6 +79,7 @@ def unsign(file_name) :
         print ("Error opening " + file_name); 
         file.close();     
 
+# start_compress returns a file that python can read from and another it can write to
 def start_compress(file_in_name, alg_name) : 
     (file_out_name, sign) = ensign(file_in_name, alg_name)  
     file_out = io.open(file_out_name, "wb") 
@@ -86,12 +87,15 @@ def start_compress(file_in_name, alg_name) :
     file_in = io.FileIO(file_in_name, "r")
     return (file_in,file_out)
 
+# end_compress closes the files and calls the writer on the intermediate file, writes the result to disk
 def end_compress(file_in,file_out) : 
     file_in.close()
     file_out.close()
     subprocess.call(["./writer", file_out.name, file_out.name[:-1], "e"])
     subprocess.call(["rm", "-f", file_out.name])
 
+# start_decompress returns a file that can be read in, one that can be string'd to, 
+# and another name for the final output file
 def start_decompress(file_name, alg_name) : 
   #get the signature and creat the temporary file name
   (alg, new_file_name) = unsign(file_name); 
@@ -119,6 +123,7 @@ def start_decompress(file_name, alg_name) :
 
   return (file_in, file_out, new_file_name)
 
+# finishing decompression
 def end_decompress(file_in, file_out, new_file_name) :   
     file_in.close()
     file_out.close()
@@ -126,9 +131,13 @@ def end_decompress(file_in, file_out, new_file_name) :
     subprocess.call(["rm", "-f", file_out.name])
     subprocess.call(["rm", "-f", file_in.name])
 
+# free_name takes in a name and returns a new_name that doesn't overwrite any 
+# files
 def free_name(name) : 
     c = 0 
     new_name = name; 
+    
+    # keep repeating until a new name is found that is free
     while(os.path.exists(new_name)) : 
         type_index = string.rfind(name, ".")
         new_name = name[:type_index] + str(c) + name[type_index:]
