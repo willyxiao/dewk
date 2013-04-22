@@ -113,7 +113,7 @@ def start_decompress(file_name, alg_name) :
   
   #get rid of the signature at the front
   zero = 0 
-  counter = 0 
+  counter = 0
   while(zero < 2) : 
     if(counter > TOO_MUCH) : 
         return "failure"

@@ -96,7 +96,6 @@ def decompress(file_name):
             n = _decode(buffer)
             assert(n < (2 ** (BYTE_SIZE * READ_IN_SIZE)))
             b = bin(n)[2:]
-
             # append zeroes to the front of binary number if it isn't full
             while(len(b) < BYTE_SIZE) : 
                 b = '0' + b
