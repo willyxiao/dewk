@@ -18,7 +18,7 @@ import subprocess
 import string
 
 READ_IN_SIZE = 1 
-ALG_NAME = "lzw"
+ALG_NAME = "seq"
 BYTE_SIZE = 8
 TOO_MUCH = 100
     
