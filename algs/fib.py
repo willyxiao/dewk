@@ -25,25 +25,29 @@ TOO_MUCH = 100
     
 ###COMPRESS###
 
-# compress takes in a string of the file name to compress 
-# and outputs a compressed file to disk
+# compress(file_in_name) outputs a compressed .fib file to disk 
 def compress(file_in_name):
-     
+    
     (file_in,file_out) = helpers.start_compress(file_in_name, ALG_NAME)
     
+    # read the first integer into file
     i = file_in.read(READ_IN_SIZE)
     
+    # while the integer isn't end of file, encode and write to file
     while (i != ''):
         enc = _encode(ord(i)) 
         file_out.write(enc)
         i = file_in.read(READ_IN_SIZE)
-        
-    helpers.end_compress(file_in,file_out)
     
-# encodes a single integer less than or equal to 1 into a fibonacci sequence. 
+    #now you're done!
+    helpers.end_compress(file_in,file_out)
+
+# encode(n) is a helper function that encodes a single integer into a fibonacci sequence    
 # Note: this builds upon the algorithm from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
 def _encode(n):
+    # ensure n >= 1
     n += 1
+
     # Return string with Fibonacci encoding for n (n >= 1).
     a = 1
     b = 1
@@ -65,33 +69,53 @@ def _encode(n):
 
 ###DECOMPRESS###
 
-# decompress takes in a string of the file name to decompress 
-# and outputs a decompressed file to disk 
+# decompress(file_name) takes in a file of type .fib and outputs uncompressed file to disk
 def decompress(file_name):
 
     (file_in, file_out, new_file_name) = helpers.start_decompress(file_name, ALG_NAME)  
 
+    # last will be used to check if two 1's are in a row
     last = '0' 
+    
+    # buffer will be the fibonacci sequence
+    buffer = ""    
+    
+    # read first character from file (should be 1 or 0)
     c = file_in.read(READ_IN_SIZE)  
-    buffer = ""
   
+    # keep repeating until end of file
     while (c != '') : 
+
+        # the buffer with the next 
         buffer = buffer + c    
+
+        # if the current character and last are both 1 then buffer is done
         if ((c == '1') and (last == '1')) : 
+
+            # b is the decoded int in binary (n should be less than the max int inputted
             n = _decode(buffer)
             assert(n < (2 ** (BYTE_SIZE * READ_IN_SIZE)))
             b = bin(n)[2:]
+
+            # append zeroes to the front of binary number if it isn't full
             while(len(b) < BYTE_SIZE) : 
                 b = '0' + b
+            
+            # write it to file and reset buffer and last
             file_out.write(b)
             buffer = ""
             last = '0'
+
+        # otherwise last is character and repeat
         else : 
             last = c
+
         c = file_in.read(READ_IN_SIZE)    
   
     helpers.end_decompress(file_in, file_out, new_file_name) 
   
+# decode(code) takes in a binary fibonnaci string and returns
+# the integer coded for
 def _decode(code):
     assert(code[-2:] == "11")
     
@@ -111,6 +135,7 @@ def _decode(code):
     #return
     return (n - 1)   
 
+# tests!
 def test () : 
     compress("../tests/001.jpg")
     decompress("../tests/001.fib")
