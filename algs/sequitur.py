@@ -8,35 +8,25 @@ import helpers
 import io
 import subprocess
 import string
-
-READ_IN_SIZE = 1 
+ 
 ALG_NAME = "seq"
 BYTE_SIZE = 8
-TOO_MUCH = 100
     
 ###COMPRESS###
 
 # compress takes in a string of the file name to compress 
 # and outputs a compressed file to disk
 def compress(file_in_name):
-
-    # opens output file and signs it 
-    (file_out_name, sign) = helpers.ensign(file_in_name, ALG_NAME)  
-    file_out = io.open(file_out_name, "wb") 
-    file_out.write(sign)
-        
-    file_in = io.FileIO(file_in_name, "r")
-    i = file_in.read(READ_IN_SIZE)
     
-    while (i != ''):
-        enc = _encode(ord(i)) 
-        file_out.write(enc)
-        i = file_in.read(READ_IN_SIZE)
-        
-    file_in.close(); 
-    file_out.close();
+    (file_in,file_out) = helpers.start_compress(file_in_name, ALG_NAME)
     
-    subprocess.call(["./writer", file_out_name, file_out_name[:-1], "e"])
+    # while the integer isn't end of file, encode and write to file
+    input = file_in.read()
+    enc = _encode(input)
+    file_out.write(enc)
+     
+    #now you're done!
+    helpers.end_compress(file_in,file_out)
 
 # list of used rules
 used_list = []
@@ -134,7 +124,12 @@ def _encode (input) :
         subst = replace(tl, sl)
         tl = tuple_list(subst)
         sl = subst
-        print sl
-    return sl
+    semi = []
+    for i in sl :
+        blah = bin(ord(str(i)))[2:]
+        while(len(blah) < BYTE_SIZE) : 
+                blah = '0' + blah
+        semi.append(blah)
+    return (string_it(semi))
 
-compress("../tests/ps7.txt")
+compress("../tests/seq_test.txt")
