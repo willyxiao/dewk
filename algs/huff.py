@@ -44,8 +44,18 @@ def compress(file_in_name):
 
 
     file_in.close();
-    file_out.close();
+    file_out.close()
 
-def _build_tree(
+
+
+#citation-parts from http://stackoverflow.com/questions/11587044
+#/how-can-i-create-a-tree-for-huffman-encoding-and-decoding
+def _build_tree(frequency_list)
+  q = queue.PriorityQueue()
+  for val in frequency_list
+      q.put(val)
+  while q.qsize() > 1:
+      smallest, next_smallest = q.get(),q.get()
+
 
 
