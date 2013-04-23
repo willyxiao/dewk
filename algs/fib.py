@@ -12,11 +12,12 @@ fib.py is a module that implements the fibonacci coding compression:
 2. fib.decompress takes in a file outputting FileName.FileType to disk. 
 """
 import unittest 
-import helpers
 import io
 import subprocess
 import string
 import os
+import helpers
+
 
 READ_IN_SIZE = 1 
 ALG_NAME = "fib"
@@ -135,6 +136,9 @@ def _decode(code):
     return (n - 1)   
 
 # tests!
+def sim_test() : 
+    print "hello, world!" 
+    
 def test () : 
     compress("../tests/001.jpg")
     decompress("../tests/001.fib")
