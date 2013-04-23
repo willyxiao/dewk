@@ -40,7 +40,7 @@ def compress(file_in_name):
         i = file_in.read(READ_IN_SIZE)
     
     #now you're done!
-    helpers.end_compress(file_in,file_out)
+    return helpers.end_compress(file_in,file_out)
 
 # encode(n) is a helper function that encodes a single integer into a fibonacci sequence    
 # Note: this builds upon the algorithm from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
@@ -72,7 +72,7 @@ def _encode(n):
 # decompress(file_name) takes in a file of type .fib and outputs uncompressed file to disk
 def decompress(file_name):
 
-    (file_in, file_out, new_file_name) = helpers.start_decompress(file_name, ALG_NAME)  
+    (file_in, file_out) = helpers.start_decompress(file_name, ALG_NAME)  
 
     # last will be used to check if two 1's are in a row
     last = '0' 
@@ -111,7 +111,7 @@ def decompress(file_name):
 
         c = file_in.read(READ_IN_SIZE)    
   
-    helpers.end_decompress(file_in, file_out, new_file_name) 
+    return helpers.end_decompress(file_in, file_out) 
   
 # decode(code) takes in a binary fibonnaci string and returns
 # the integer coded for
