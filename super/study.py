@@ -12,13 +12,16 @@ super.decompress decompresses a file
 """
 
 # this allows appending files from a different directory
+import random
+
 import sys
 sys.path.append('../algs')
+import fib
+import sequiter
 
-
-algs.fib.simple_test(); 
-
-def decompress(file_name) : 
-    print "hello, world!"
-
-
+def best_alg(file_name): 
+    i = random.int(1,2)
+    if i = 1 :
+        return "fib"
+    else :
+        return "sequiter"   
