@@ -1,1 +1,1 @@
-__all__ = ["sequitur", "fib"]
+__all__ = [ "fib"]

@@ -10,18 +10,18 @@ uses that algorithm to encode the file
 
 super.decompress decompresses a file
 """
+# import all of the compression algorithms 
+import sys
+sys.path.append('../')
+from algs import *
 
-# this allows appending files from a different directory
+# rest of the necessary files
 import random
 
-import sys
-sys.path.append('../algs')
-import fib
-import sequiter
 
 def best_alg(file_name): 
-    i = random.int(1,2)
-    if i = 1 :
+    i = random.randint(1,2)
+    if i == 1 :
         return "fib"
     else :
         return "sequiter"   
