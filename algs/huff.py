@@ -9,6 +9,7 @@ keskici@college.harvard.edu
 import io
 import helpers
 import queue
+
 # installed bitstream for this: 
 # "sudo python setup.py install" after downloading from
 # http://code.google.com/p/python-bitstring/
@@ -50,6 +51,9 @@ def compress(file_in_name):
 
 #citation-parts from http://stackoverflow.com/questions/11587044
 #/how-can-i-create-a-tree-for-huffman-encoding-and-decoding
+class HuffNode(object):
+    def _init_ 
+
 def _build_tree(frequency_list)
   q = queue.PriorityQueue()
   for val in frequency_list
