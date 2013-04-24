@@ -2,26 +2,29 @@
 CS51 Final Project
 Eamon, David, Kevin, Willy
 
-super.py by Willy Xiao and _
+study.py by Willy Xiao and _
 willy@chenxiao.us
-
-super.compress first finds the best compression algorithm to be used on each file and then 
-uses that algorithm to encode the file
-
-super.decompress decompresses a file
 """
-# import all of the compression algorithms 
+# allow the system path to be recognized
 import sys
 sys.path.append('../')
+
+# import everything from algs that is needed
 from algs import *
+import algs
 
 # rest of the necessary files
 import random
 
-
 def best_alg(file_name): 
     i = random.randint(1,2)
-    if i == 1 :
-        return "fib"
+    return algs.fib
+
+def get_alg(file_name): 
+    alg_name = algs.helpers.which_alg(file_name)
+
+    if alg_name == "fib" : 
+        return algs.fib
     else :
-        return "sequiter"   
+        print "Something went wrong! There ain't that alg yo..."
+        raise Exception("Invariant Broken")

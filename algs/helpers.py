@@ -145,3 +145,8 @@ def free_name(name) :
         new_name = name[:type_index] + str(c) + name[type_index:]
         c += 1
     return new_name
+
+# this returns the name of the algorithm used
+def which_alg(file_name) : 
+    (alg_name, trash) = unsign(file_name)
+    return alg_name
