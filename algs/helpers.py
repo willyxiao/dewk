@@ -78,6 +78,34 @@ def unsign(file_name) :
     except IOError : 
         print ("Error opening " + file_name);     
 
+# returns a frequency list of all the bytes in a file,
+# the "specific" mode also appends a decimal value to the 
+# end of the frequency representing the byte, this is used for huff
+def freq_list(file_in, mode) : 
+
+    # initialize file, empty dictionary, and first byte
+    f = io.open(file_in, "r")
+    freq_dict = {}
+    byte = f.read(READ_IN_SIZE)
+
+    # reads through the entire file, adding one to the frequency
+    # of each byte read
+    while (byte != ''):
+        if byte in freq_dict:
+            freq_dict[byte] += 1
+        elif mode == "specific" :
+            freq_dict[byte] = 1 + (ord(byte)/1000.)
+        else :
+            freq_dict[byte] = 1
+        byte = f.read(READ_IN_SIZE)
+
+    # converts the dictionary to a list and returns the list
+    freq_list = []        
+    for key in freq_dict:
+        freq_list.append((freq_dict[key],key))
+        
+    return freq_list
+
 # start_compress returns a file that python can read from and another it can write to
 def start_compress(file_in_name, alg_name) : 
     (file_out_name, sign) = ensign(file_in_name, alg_name)  

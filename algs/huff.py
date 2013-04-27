@@ -61,6 +61,8 @@ def decompress(file_name):
 
 # build frequency list
 def _build_freq_list (file_in):
+    return helpers.freq_list(file_in, "specific")
+''' check this works kevin...
     f = io.open(file_in, "r")
     freq_dict = {}
     byte = f.read(READ_IN_SIZE)
@@ -74,7 +76,7 @@ def _build_freq_list (file_in):
     for key in freq_dict:
         freq_list.append((freq_dict[key],key))
     return freq_list
-            
+'''         
 
 # builds huffman tree assuming frequency_list is a list of (f,val) tuples
 def _build_tree(frequency_list):
