@@ -19,36 +19,41 @@ READ_IN_SIZE = 1
 ALG_NAME = "huf"
 BYTE_SIZE = 8
 
-global buffer
-buffer = 0x00
-
-global buffer_pos
-buffer_pos = 0
-
 ### COMPRESS ###
 
+# compress(file_in_name) outputs a compressed .huf file to disk
 def compress(file_in_name):
-    global buffer
-    global buffer_pos
-
-    #open output file and sign
-    (file_out_name, sign) = helpers.ensign(file_in_name, ALG_NAME)
-    file_out = io.open(file_out_name, "wb")
-    file_out.write(sign)
-
-    file_in = io.open(file_in_name, "r")
+    
+    (file_in,file_out) = helpers.start_compress(file_in_name, ALG_NAME)
+    
+    # get dictionary of codes for given bytes
+    codes = _add_codes(_build_tree(_build_freq_list(file_in)),{},'')
+    
+    # read the first integer into file
     i = file_in.read(READ_IN_SIZE)
+    
+    # while the integer isn't end of file, encode and write to file
+    while (i != ''):
+        enc = ord(i) 
+        file_out.write(codes[enc])
+        i = file_in.read(READ_IN_SIZE)
+    
+    #now you're done!
+    return helpers.end_compress(file_in,file_out)
 
+####DECROMPRESS###
 
+# decompress(file_name) takes in a file of type .huf 
+# and outputs uncompressed file to disk
 
-#insert actual compression part
-
-
-    file_in.close();
-    file_out.close()
-
-
-
+def decompress(file_name):
+    (file_in,file_out) = helpers.start_decompress(file_name, ALG_NAME)
+    
+    # get dictionary of codes for given bytes
+    codes = _add_codes(_build_tree(_build_freq_list(file_in)),{},'')
+    
+    
+    
 #citation: inspired by http://stackoverflow.com/questions/11587044
 #/how-can-i-create-a-tree-for-huffman-encoding-and-decoding
 #and http://stackoverflow.com/questions/6770925/
