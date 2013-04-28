@@ -84,7 +84,7 @@ def unsign(file_name) :
 def freq_list(file_in, mode) : 
 
     # initialize file, empty dictionary, and first byte
-    f = io.open(file_in, "r")
+    f = io.FileIO(file_in, "r")
     freq_dict = {}
     byte = f.read(READ_IN_SIZE)
 
@@ -178,3 +178,11 @@ def free_name(name) :
 def which_alg(file_name) : 
     (alg_name, trash) = unsign(file_name)
     return alg_name
+
+# converts an integer to its binary representation for 1 byte
+def to_bin(n, size) : 
+    b = bin(n)[2:]
+    # append zeroes to the front of binary number if it isn't full
+    while(len(b) < size) : 
+        b = '0' + b
+    return b

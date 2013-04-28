@@ -17,7 +17,10 @@ import algs
 import random
 
 def best_alg(file_name): 
-    i = random.randint(1,2)
+    freq_list = algs.helpers.freq_list(file_name)
+    for tup in freq_list : 
+        (fr, ch) = tup 
+        
     return algs.fib
 
 def get_alg(file_name): 
