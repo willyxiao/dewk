@@ -99,7 +99,6 @@ def _new_freq(lfreq,rfreq) :
 # codes is a dictionary of bytes and corresponding encoded strings  
 def _add_codes(huff_tree, dct, code) :
     (f, val) = huff_tree 
-    print val
     if (type(val) != tuple) : 
          dct[val] = code
     else :
