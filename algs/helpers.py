@@ -84,7 +84,7 @@ def unsign(file_name) :
 def freq_list(file_in, mode) : 
 
     # initialize file, empty dictionary, and first byte
-    f = io.open(file_in, "r")
+    f = io.FileIO(file_in, "r")
     freq_dict = {}
     byte = f.read(READ_IN_SIZE)
 
