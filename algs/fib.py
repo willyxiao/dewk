@@ -12,10 +12,8 @@ fib.py is a module that implements the fibonacci coding compression:
 2. fib.decompress takes in a file outputting FileName.FileType to disk. 
 """
 import unittest 
-import io
 import subprocess
 import string
-import os
 import helpers
 
 
@@ -93,16 +91,12 @@ def decompress(file_name):
         # if the current character and last are both 1 then buffer is done
         if ((c == '1') and (last == '1')) : 
 
-            # b is the decoded int in binary (n should be less than the max int inputted
+            # n is the decoded int (n should be less than the max int inputted
             n = _decode(buffer)
             assert(n < (2 ** (BYTE_SIZE * READ_IN_SIZE)))
-            b = bin(n)[2:]
-            # append zeroes to the front of binary number if it isn't full
-            while(len(b) < BYTE_SIZE) : 
-                b = '0' + b
             
             # write it to file and reset buffer and last
-            file_out.write(b)
+            file_out.write(helpers.to_bin(n, BYTE_SIZE))
             buffer = ""
             last = '0'
 
