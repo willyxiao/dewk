@@ -186,3 +186,5 @@ def to_bin(n, size) :
     while(len(b) < size) : 
         b = '0' + b
     return b
+    
+    

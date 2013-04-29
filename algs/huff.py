@@ -26,16 +26,25 @@ def compress(file_in_name):
     
     (file_in,file_out) = helpers.start_compress(file_in_name, ALG_NAME)
     
+    # get frequency list
+    f_list = _build_freq_list(file_in_name)
+    
+    file_out.write((helpers.to_bin(len(f_list), BYTE_SIZE)))
+    
+    for element in f_list :
+        (f,val) = element
+        file_out.write(helpers.to_bin(int(f), BYTE_SIZE))
+        file_out.write(helpers.to_bin(ord(val),BYTE_SIZE))
+        
     # get dictionary of codes for given bytes
-    codes = _add_codes(_build_tree(_build_freq_list(file_in)),{},'')
+    codes = _add_codes(_build_tree(f_list),{},'')
     
     # read the first integer into file
     i = file_in.read(READ_IN_SIZE)
     
     # while the integer isn't end of file, encode and write to file
     while (i != ''):
-        enc = ord(i) 
-        file_out.write(codes[enc])
+        file_out.write(codes[i])
         i = file_in.read(READ_IN_SIZE)
     
     #now you're done!
@@ -47,10 +56,32 @@ def compress(file_in_name):
 # and outputs uncompressed file to disk
 
 def decompress(file_name):
+
     (file_in,file_out) = helpers.start_decompress(file_name, ALG_NAME)
     
+    i = file_in.read(BYTE_SIZE)
+    header_left = int(i,2)
+    
+    freq_list = [] 
+    while (header_left > 0):
+        freq = int(file_in.read(BYTE_SIZE),2)
+        val = int(file_in.read(BYTE_SIZE),2)
+        freq = freq + val/1000.
+        header_left = header_left - 1
+        freq_list.append((freq,val))
+        
     # get dictionary of codes for given bytes
-    codes = _add_codes(_build_tree(_build_freq_list(file_in)),{},'')
+    codes = _add_codes(_build_tree(freq_list),{},'')
+    # flip dictionary 
+    #http://stackoverflow.com/questions/483666/python-reverse-inverse-a-mapping
+    inv_codes = {codes:vals for vals, codes in map.items()}
+    
+    i = file_in.read(BYTE_SIZE)
+    while(i !=''):
+        file_out.write(inv_codes[i])
+        i = file_in.read(BYTE_SIZE)
+        
+    return helpers.end_decompress(file_in,file_out)    
     
     
     
@@ -62,7 +93,7 @@ def decompress(file_name):
 # build frequency list
 def _build_freq_list (file_in):
     return helpers.freq_list(file_in, "specific")
-''' check this works kevin...
+''' 
     f = io.open(file_in, "r")
     freq_dict = {}
     byte = f.read(READ_IN_SIZE)
