@@ -179,7 +179,7 @@ def which_alg(file_name) :
     (alg_name, trash) = unsign(file_name)
     return alg_name
 
-# converts an integer to its binary representation for 1 byte
+# converts an integer to its binary representation for the size wanted
 def to_bin(n, size) : 
     b = bin(n)[2:]
     # append zeroes to the front of binary number if it isn't full

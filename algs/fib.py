@@ -34,7 +34,7 @@ def compress(file_in_name):
     
     # while the integer isn't end of file, encode and write to file
     while (i != ''):
-        enc = _encode(ord(i)) 
+        enc = _encode(ord(i))
         file_out.write(enc)
         i = file_in.read(READ_IN_SIZE)
     
@@ -134,12 +134,9 @@ def sim_test() :
     print "hello, world!" 
     
 def test () : 
-    compress("../tests/001.jpg")
-    decompress("../tests/001.fib")
-    compress("../tests/canon.mid")
-    decompress("../tests/canon.fib")
-    compress("../tests/ps7.txt")
-    decompress("../tests/ps7.fib")
+    decompress(compress("../tests/001.jpg"))
+    decompress(compress("../tests/canon.mid"))
+    decompress(compress("../tests/ps7.txt"))
  
 def del_tests () : 
     subprocess.call(["rm", "-f", "../tests/001.fib"])
