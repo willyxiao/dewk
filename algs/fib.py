@@ -132,6 +132,7 @@ def _decode(code):
 ### ESTIMATE ###
 def estimate(file_name) : 
     freq_list = helpers.freq_list(file_name, "sample") 
+    return helpers.size(file_name) - 1
 
 ###tests!###
 def sim_test() : 

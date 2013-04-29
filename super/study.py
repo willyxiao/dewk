@@ -17,10 +17,9 @@ import algs
 import random
 
 # the algorithms listed
-algos = 
-{
+algos = {
     "fib" : algs.fib,
-    "huff" : algs.huff,
+    #"huff" : algs.huff,
     "none" : algs.none,
 }
 
