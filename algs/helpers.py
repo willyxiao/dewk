@@ -88,8 +88,10 @@ def freq_list(file_in, mode) :
     freq_dict = {}
     byte = f.read(READ_IN_SIZE)
 
-    # reads through the entire file, adding one to the frequency
-    # of each byte read
+    # reads through the file, adding one to the frequency
+    # of each byte read, if the mode is to sample, then only the first 500 bytes are returned
+    counter = 0
+
     while (byte != ''):
         if byte in freq_dict:
             freq_dict[byte] += 1
@@ -98,6 +100,10 @@ def freq_list(file_in, mode) :
         else :
             freq_dict[byte] = 1
         byte = f.read(READ_IN_SIZE)
+
+        counter += 1
+        if mode == "sample" and counter > 500 : 
+            break 
 
     # converts the dictionary to a list and returns the list
     freq_list = []        
@@ -187,4 +193,5 @@ def to_bin(n, size) :
         b = '0' + b
     return b
     
-    
+def size(file_name) : 
+    return os.path.getsize(file_name)
