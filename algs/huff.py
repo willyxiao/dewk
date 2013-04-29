@@ -60,31 +60,40 @@ def decompress(file_name):
     (file_in,file_out) = helpers.start_decompress(file_name, ALG_NAME)
     
     i = file_in.read(BYTE_SIZE)
+#FIX
     header_left = int(i,2)
-    
+
     freq_list = [] 
     while (header_left > 0):
         freq = int(file_in.read(BYTE_SIZE),2)
         val = int(file_in.read(BYTE_SIZE),2)
         freq = freq + val/1000.
-        header_left = header_left - 1
+        header_left -= 1
         freq_list.append((freq,val))
         
     # get dictionary of codes for given bytes
     codes = _add_codes(_build_tree(freq_list),{},'')
+    
     # flip dictionary 
-    #http://stackoverflow.com/questions/483666/python-reverse-inverse-a-mapping
-    inv_codes = {codes:vals for vals, codes in map.items()}
+    inv_codes = {}
+    for code in codes:
+        inv_codes[codes[code]] = code
+
+    i = file_in.read(READ_IN_SIZE)
+    code = i
     
-    i = file_in.read(BYTE_SIZE)
     while(i !=''):
-        file_out.write(inv_codes[i])
-        i = file_in.read(BYTE_SIZE)
+        i = file_in.read(READ_IN_SIZE)
         
-    return helpers.end_decompress(file_in,file_out)    
-    
-    
-    
+        if (code in inv_codes):
+            file_out.write(helpers.to_bin(inv_codes[code], BYTE_SIZE))
+            code = i
+        else:
+            code = code + i
+
+        
+    return helpers.end_decompress(file_in,file_out)        
+
 #citation: inspired by http://stackoverflow.com/questions/11587044
 #/how-can-i-create-a-tree-for-huffman-encoding-and-decoding
 #and http://stackoverflow.com/questions/6770925/
