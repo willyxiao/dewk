@@ -7,6 +7,24 @@ willy@chenxiao.us
 
 helpers.py is a module that includes helper functions for encoding. 
 Also helps standardize everything. 
+
+INTERFACE:
+
+    ensign(file_name, alg_name) -> new_file_name (*to write*), signature (*to append at the front*)
+    unsign(file_name) -> algorithm_name (* used to uncompress *), new_file_name (* to uncompress to *)
+
+    freq_list(file_name, mode) -> 
+        3 modes : 
+            | "sample" -> freq_list for the first sample_size bytes
+            | "specific" -> freq_list for all the bytes with decimal representation of the ascii-value of the byte
+            | "none" -> freq_list for all the bytes
+    freq_list_sample_size(file_name) -> sample_size (* either the size of the file if it's smaller than sample size or sample size *)
+    freq_list_sample_ratio(file_name) -> ratio of the whole file to the sample size
+    
+    
+    
+
+
 """
 import string
 import os
@@ -78,6 +96,9 @@ def unsign(file_name) :
     except IOError : 
         print ("Error opening " + file_name);     
 
+# sample size of the frequency list
+sample_size = 2000
+
 # returns a frequency list of all the bytes in a file,
 # the "specific" mode also appends a decimal value to the 
 # end of the frequency representing the byte, this is used for huff
@@ -102,7 +123,7 @@ def freq_list(file_in, mode) :
         byte = f.read(READ_IN_SIZE)
 
         counter += 1
-        if mode == "sample" and counter > 500 : 
+        if mode == "sample" and counter > sample_size : 
             break 
 
     # converts the dictionary to a list and returns the list
@@ -111,6 +132,15 @@ def freq_list(file_in, mode) :
         freq_list.append((freq_dict[key],key))
         
     return freq_list
+
+# allows users outside module to access sample size
+def freq_list_sample_size (file_name) : 
+    return min(size(file_name), sample_size)
+
+# returns the size of the file over the size of the sample
+def freq_list_sample_ratio (file_name) : 
+    return (size(file_name) / freq_list_sample_size(file_name))
+
 
 # start_compress returns a file that python can read from and another it can write to
 def start_compress(file_in_name, alg_name) : 

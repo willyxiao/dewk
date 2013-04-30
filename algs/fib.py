@@ -131,8 +131,20 @@ def _decode(code):
 
 ### ESTIMATE ###
 def estimate(file_name) : 
+
+    # frequency list sample of the file
     freq_list = helpers.freq_list(file_name, "sample") 
-    return helpers.size(file_name) - 1
+    
+    # find the total number of bits of the first compressed sample_size bytes    
+    total_bits = 0 
+    for pair in freq_list : 
+        (freq, char) = pair 
+        total_bits += (len(_encode(ord(char))) * freq)
+    
+    total_bytes = total_bits / BYTE_SIZE
+    
+    # returns the total_bytes times the ration of the file_size / sample_size
+    return (total_bytes * helpers.freq_list_sample_ratio(file_name))
 
 ###tests!###
 def sim_test() : 
