@@ -18,9 +18,12 @@ import random
 
 # the algorithms listed
 algos = {
+    "none" : algs.none,
+    
     "fib" : algs.fib,
     #"huff" : algs.huff,
-    "none" : algs.none,
+    #"lzw" : algs.lzw, 
+    #"seq" : algs.seq
 }
 
 # best_alg finds the best algorithm for compression based on the 
