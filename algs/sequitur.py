@@ -23,10 +23,28 @@ def compress(file_in_name):
     # while the integer isn't end of file, encode and write to file
     input = file_in.read()
     enc = _encode(input)
+    dic = hash_to_tuple(hash)
     file_out.write(enc)
+    file_out.write(dic)
      
     #now you're done!
     helpers.end_compress(file_in,file_out)
+
+###DECOMPRESS###
+
+# compress takes in a string of the file name to compress 
+# and outputs a compressed file to disk
+def decompress(file_name):
+    
+    (file_in,file_out,new_file_name) = helpers.start_decompress(file_name, ALG_NAME)
+    
+    # while the integer isn't end of file, encode and write to file
+    input = file_in.read()
+    dec = _decode(input)
+    file_out.write(dec)
+     
+    #now you're done!
+    helpers.end_decompress(file_in,file_out,new_file_name)
 
 # list of used rules
 used_list = []
@@ -117,6 +135,15 @@ def string_it (sl) :
         new_string = new_string + str(v)
     return new_string
 
+def to_bin (input) :
+    semi = []
+    for i in input :
+        blah = bin(ord(str(i)))[2:]
+        while(len(blah) < BYTE_SIZE) : 
+                blah = '0' + blah
+        semi.append(blah)
+    return (string_it(semi))
+
 def _encode (input) :
     sl = single_list(input)
     tl = tuple_list(input)
@@ -124,12 +151,71 @@ def _encode (input) :
         subst = replace(tl, sl)
         tl = tuple_list(subst)
         sl = subst
-    semi = []
-    for i in sl :
-        blah = bin(ord(str(i)))[2:]
-        while(len(blah) < BYTE_SIZE) : 
-                blah = '0' + blah
-        semi.append(blah)
-    return (string_it(semi))
+    return to_bin(sl)
 
-compress("../tests/seq_test.txt")
+def hash_to_tuple (dict) :
+    export_list = []
+    for k, v in dict.iteritems():
+        export_list.append((k, v))
+    return to_bin("/" + ('; '.join(map(str,export_list))))
+
+# DECODE STUFF BEGINS HERE
+
+def split_comma (input) :
+    i = 0
+    j = ''
+    k = ''
+    while i < len(input) and input[i] != ',' :
+        if str.isalpha(input[i]) or str.isalnum(input[i]) :
+            j = j + input[i]
+            i += 1
+        else :
+            i += 1
+    while i < len(input) :
+        if str.isalnum(input[i]) :
+            k = k + input[i]
+            i += 1
+        else :
+            i += 1
+    return (j,k)
+
+def to_hash (input) :
+    tl = input.split("; ")
+    tl_new = []
+    for i in tl :
+        i = split_comma(i)
+        tl_new.append(i)
+    d = {}
+    for v, k in tl_new :
+        d.update({k: v})
+    print d
+    return d
+
+def inv_dict (input) :
+    string_dict = ''
+    i = 0
+    length = len(input)
+    while (i < length) and (input[i] != "/") :
+        i += 1
+    i += 1    
+    while (i < length) :
+        string_dict = string_dict + input[i]
+        i += 1
+    return to_hash(string_dict)
+
+def _decode (input) :
+    dec_dict = inv_dict (input)
+    to_dec = ''
+    i = 0
+    length = len(input)
+    while (i < length) and (input[i] != "/") :
+        if dec_dict.has_key(input[i]) :
+            to_dec = to_dec + dec_dict.get(input[i])
+            i += 1
+        else :
+            to_dec = to_dec + input[i]
+            i += 1
+    return to_dec
+
+compress("../tests/st.txt")
+decompress("../tests/st.seq")
