@@ -92,6 +92,7 @@ def decompress(file_name):
     i = file_in.read(BYTE_SIZE)
 #FIX
     header_left = int(i,2)
+    header_left_original = header_left
 
     freq_list = [] 
     while (header_left > 0):
@@ -112,7 +113,7 @@ def decompress(file_name):
     i = file_in.read(READ_IN_SIZE)
     code = i
     counter = 0
-    stop = (helpers.size(file_in.name) - (BYTE_SIZE + padding + p) )
+    stop = (helpers.size(file_in.name) - ((2*BYTE_SIZE) + padding + p + (header_left_original *2 * BYTE_SIZE) ))
     print stop
 
     while (counter < stop):
