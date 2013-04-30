@@ -42,10 +42,19 @@ def compress(file_in_name):
     # read the first integer into file
     i = file_in.read(READ_IN_SIZE)
     
+    # initialize string to get total bits written
+    # (needed to know how much padding is added)
+    bit_sting = ''
+    
     # while the integer isn't end of file, encode and write to file
     while (i != ''):
         file_out.write(codes[i])
+        bit_string = bitstring + codes[i]
         i = file_in.read(READ_IN_SIZE)
+    
+    # write how many significant bits in last byte to end
+    relevant_last_byte = len(bit_string)% 8    
+    file_out.write(helpers.to_bin(relevant_last_byte, BYTE_SIZE))
     
     #now you're done!
     return helpers.end_compress(file_in,file_out)
@@ -84,13 +93,11 @@ def decompress(file_name):
     
     while(i !=''):
         i = file_in.read(READ_IN_SIZE)
-        
         if (code in inv_codes):
             file_out.write(helpers.to_bin(inv_codes[code], BYTE_SIZE))
             code = i
         else:
             code = code + i
-
         
     return helpers.end_decompress(file_in,file_out)        
 
