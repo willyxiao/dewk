@@ -129,7 +129,12 @@ def _decode(code):
     #return
     return (n - 1)   
 
-# tests!
+### ESTIMATE ###
+def estimate(file_name) : 
+    freq_list = helpers.freq_list(file_name, "sample") 
+    return helpers.size(file_name) - 1
+
+###tests!###
 def sim_test() : 
     print "hello, world!" 
     

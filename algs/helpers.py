@@ -88,8 +88,10 @@ def freq_list(file_in, mode) :
     freq_dict = {}
     byte = f.read(READ_IN_SIZE)
 
-    # reads through the entire file, adding one to the frequency
-    # of each byte read
+    # reads through the file, adding one to the frequency
+    # of each byte read, if the mode is to sample, then only the first 500 bytes are returned
+    counter = 0
+
     while (byte != ''):
         if byte in freq_dict:
             freq_dict[byte] += 1
@@ -98,6 +100,10 @@ def freq_list(file_in, mode) :
         else :
             freq_dict[byte] = 1
         byte = f.read(READ_IN_SIZE)
+
+        counter += 1
+        if mode == "sample" and counter > 500 : 
+            break 
 
     # converts the dictionary to a list and returns the list
     freq_list = []        
@@ -118,7 +124,7 @@ def start_compress(file_in_name, alg_name) :
 def end_compress(file_in,file_out) : 
     file_in.close()
     file_out.close()
-    subprocess.call(["./writer", file_out.name, file_out.name[:-1], "e"])
+    subprocess.call([abs_path("writer"), file_out.name, file_out.name[:-1], "e"])
     subprocess.call(["rm", "-f", file_out.name])
     return file_out.name[:-1]
 
@@ -134,7 +140,7 @@ def start_decompress(file_name, alg_name) :
   assert(alg == alg_name)
 
   #convert binary file to string of 1's and 0's
-  subprocess.call(["./reader", file_name, tmp_name, "e"])  
+  subprocess.call([abs_path("reader"), file_name, tmp_name, "e"])  
   
   file_out = open(tmp_name2, "w")
   file_in = open(tmp_name, "r") 
@@ -156,7 +162,7 @@ def end_decompress(file_in, file_out) :
     file_in.close()
     file_out.close()
     output = free_name(file_in.name[:-2])
-    subprocess.call(["./writer", file_out.name, output, "no"])
+    subprocess.call([abs_path("writer"), file_out.name, output, "no"])
     subprocess.call(["rm", "-f", file_out.name])
     subprocess.call(["rm", "-f", file_in.name])
     return output
@@ -187,4 +193,14 @@ def to_bin(n, size) :
         b = '0' + b
     return b
     
-    
+# returns the size of the file
+def size(file_name) : 
+    return os.path.getsize(file_name)
+
+# returns the absolute path of a file/script inside the same directory as helpers
+def abs_path(file_name) : 
+    path = os.path.abspath(__file__)
+    pos = string.rfind(path, "/")
+    path = path[:(pos + 1)]
+    return path + file_name
+

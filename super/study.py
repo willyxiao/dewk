@@ -16,18 +16,33 @@ import algs
 # rest of the necessary files
 import random
 
-def best_alg(file_name): 
-    freq_list = algs.helpers.freq_list(file_name)
-    for tup in freq_list : 
-        (fr, ch) = tup 
-        
-    return algs.fib
+# the algorithms listed
+algos = {
+    "fib" : algs.fib,
+    #"huff" : algs.huff,
+    "none" : algs.none,
+}
 
+# best_alg finds the best algorithm for compression based on the 
+# first 500 bytes of the file
+def best_alg(file_name): 
+    
+    # initialize the best algorithm to none
+    best_estimate = algs.none.estimate(file_name)
+    best_alg = algs.none
+
+    # if any of the algorithms are better, then substitute it in for the best
+    for alg_name in algos : 
+        estimate = algos[alg_name].estimate(file_name)
+        if best_estimate > estimate : 
+            best_estimate = estimate
+            best_alg = algos[alg_name]
+    
+    # return the best algorithm
+    return best_alg
+
+# get_alg returns the module used to compress the file 
+# file_name must be the name of a compressed file
 def get_alg(file_name): 
     alg_name = algs.helpers.which_alg(file_name)
-
-    if alg_name == "fib" : 
-        return algs.fib
-    else :
-        print "Something went wrong! There ain't that alg yo..."
-        raise Exception("Invariant Broken")
+    return algos[alg_name]
