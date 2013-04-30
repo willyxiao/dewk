@@ -44,17 +44,23 @@ def compress(file_in_name):
     
     # initialize string to get total bits written
     # (needed to know how much padding is added)
-    bit_sting = ''
+    bit_string = 0
     
     # while the integer isn't end of file, encode and write to file
     while (i != ''):
         file_out.write(codes[i])
-        bit_string = bitstring + codes[i]
+        bit_string = (bit_string + len(codes[i])) % 8
         i = file_in.read(READ_IN_SIZE)
     
     # write how many significant bits in last byte to end
-    relevant_last_byte = len(bit_string)% 8    
-    file_out.write(helpers.to_bin(relevant_last_byte, BYTE_SIZE))
+    padding = (BYTE_SIZE - bit_string) % 8
+    padding_original = padding
+    print padding
+    while padding > 0:
+        file_out.write("0")
+        padding -= 1 
+    file_out.write(helpers.to_bin(padding_original, BYTE_SIZE))
+    print helpers.to_bin(padding_original, BYTE_SIZE)
     
     #now you're done!
     return helpers.end_compress(file_in,file_out)
@@ -65,8 +71,23 @@ def compress(file_in_name):
 # and outputs uncompressed file to disk
 
 def decompress(file_name):
-
+    
     (file_in,file_out) = helpers.start_decompress(file_name, ALG_NAME)
+    
+    p = file_in.tell()
+    print p
+    file_in.seek(0,0)
+    # go to last byte
+    file_in.seek(-8,2)
+    
+    # store how much padding is in second to last byte
+    pad = file_in.read(BYTE_SIZE)
+    print pad
+    
+    padding = int(pad,2)
+    print padding
+    # set position to start of file
+    file_in.seek(p,0)
     
     i = file_in.read(BYTE_SIZE)
 #FIX
@@ -90,9 +111,13 @@ def decompress(file_name):
 
     i = file_in.read(READ_IN_SIZE)
     code = i
-    
-    while(i !=''):
+    counter = 0
+    stop = (helpers.size(file_in.name) - (BYTE_SIZE + padding + p) )
+    print stop
+
+    while (counter < stop):
         i = file_in.read(READ_IN_SIZE)
+        counter += 1
         if (code in inv_codes):
             file_out.write(helpers.to_bin(inv_codes[code], BYTE_SIZE))
             code = i

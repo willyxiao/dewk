@@ -163,8 +163,8 @@ def end_decompress(file_in, file_out) :
     file_out.close()
     output = free_name(file_in.name[:-2])
     subprocess.call([abs_path("writer"), file_out.name, output, "no"])
-    subprocess.call(["rm", "-f", file_out.name])
-    subprocess.call(["rm", "-f", file_in.name])
+#    subprocess.call(["rm", "-f", file_out.name])
+#    subprocess.call(["rm", "-f", file_in.name])
     return output
     
 # free_name takes in a name and returns a new_name that doesn't overwrite any 
