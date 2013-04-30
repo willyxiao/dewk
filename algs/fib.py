@@ -12,11 +12,10 @@ fib.py is a module that implements the fibonacci coding compression:
 2. fib.decompress takes in a file outputting FileName.FileType to disk. 
 """
 import unittest 
-import helpers
-import io
 import subprocess
 import string
-import os
+import helpers
+
 
 READ_IN_SIZE = 1 
 ALG_NAME = "fib"
@@ -35,12 +34,12 @@ def compress(file_in_name):
     
     # while the integer isn't end of file, encode and write to file
     while (i != ''):
-        enc = _encode(ord(i)) 
+        enc = _encode(ord(i))
         file_out.write(enc)
         i = file_in.read(READ_IN_SIZE)
     
     #now you're done!
-    helpers.end_compress(file_in,file_out)
+    return helpers.end_compress(file_in,file_out)
 
 # encode(n) is a helper function that encodes a single integer into a fibonacci sequence    
 # Note: this builds upon the algorithm from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
@@ -72,7 +71,7 @@ def _encode(n):
 # decompress(file_name) takes in a file of type .fib and outputs uncompressed file to disk
 def decompress(file_name):
 
-    (file_in, file_out, new_file_name) = helpers.start_decompress(file_name, ALG_NAME)  
+    (file_in, file_out) = helpers.start_decompress(file_name, ALG_NAME)  
 
     # last will be used to check if two 1's are in a row
     last = '0' 
@@ -92,17 +91,12 @@ def decompress(file_name):
         # if the current character and last are both 1 then buffer is done
         if ((c == '1') and (last == '1')) : 
 
-            # b is the decoded int in binary (n should be less than the max int inputted
+            # n is the decoded int (n should be less than the max int inputted
             n = _decode(buffer)
             assert(n < (2 ** (BYTE_SIZE * READ_IN_SIZE)))
-            b = bin(n)[2:]
-
-            # append zeroes to the front of binary number if it isn't full
-            while(len(b) < BYTE_SIZE) : 
-                b = '0' + b
             
             # write it to file and reset buffer and last
-            file_out.write(b)
+            file_out.write(helpers.to_bin(n, BYTE_SIZE))
             buffer = ""
             last = '0'
 
@@ -112,7 +106,7 @@ def decompress(file_name):
 
         c = file_in.read(READ_IN_SIZE)    
   
-    helpers.end_decompress(file_in, file_out, new_file_name) 
+    return helpers.end_decompress(file_in, file_out) 
   
 # decode(code) takes in a binary fibonnaci string and returns
 # the integer coded for
@@ -135,14 +129,31 @@ def _decode(code):
     #return
     return (n - 1)   
 
-# tests!
+### ESTIMATE ###
+def estimate(file_name) : 
+
+    # frequency list sample of the file
+    freq_list = helpers.freq_list(file_name, "sample") 
+    
+    # find the total number of bits of the first compressed sample_size bytes    
+    total_bits = 0 
+    for pair in freq_list : 
+        (freq, char) = pair 
+        total_bits += (len(_encode(ord(char))) * freq)
+    
+    total_bytes = total_bits / BYTE_SIZE
+    
+    # returns the total_bytes times the ration of the file_size / sample_size
+    return (total_bytes * helpers.freq_list_sample_ratio(file_name))
+
+###tests!###
+def sim_test() : 
+    print "hello, world!" 
+    
 def test () : 
-    compress("../tests/001.jpg")
-    decompress("../tests/001.fib")
-    compress("../tests/canon.mid")
-    decompress("../tests/canon.fib")
-    compress("../tests/ps7.txt")
-    decompress("../tests/ps7.fib")
+    decompress(compress("../tests/001.jpg"))
+    decompress(compress("../tests/canon.mid"))
+    decompress(compress("../tests/ps7.txt"))
  
 def del_tests () : 
     subprocess.call(["rm", "-f", "../tests/001.fib"])
