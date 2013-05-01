@@ -29,7 +29,7 @@ def compress(file_in_name):
     # get frequency list
     f_list = _build_freq_list(file_in_name)
     
-    file_out.write((helpers.to_bin(len(f_list), BYTE_SIZE)))
+    file_out.write((helpers.to_bin((len(f_list) -1), BYTE_SIZE)))
     
     for element in f_list :
         (f,val) = element
@@ -91,7 +91,7 @@ def decompress(file_name):
     
     i = file_in.read(BYTE_SIZE)
 
-    header_left = int(i,2)
+    header_left = int(i,2) + 1
     header_left_original = header_left
 
     freq_list = [] 
