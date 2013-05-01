@@ -10,11 +10,6 @@ import io
 import helpers
 import Queue
 
-# installed bitstream for this: 
-# "sudo python setup.py install" after downloading from
-# http://code.google.com/p/python-bitstring/
-#from bitstream import BitStream, BitArray
-
 READ_IN_SIZE = 1
 ALG_NAME = "huf"
 BYTE_SIZE = 8
@@ -55,12 +50,11 @@ def compress(file_in_name):
     # write how many significant bits in last byte to end
     padding = (BYTE_SIZE - bit_string) % 8
     padding_original = padding
-    print padding
+
     while padding > 0:
         file_out.write("0")
         padding -= 1 
     file_out.write(helpers.to_bin(padding_original, BYTE_SIZE))
-    print helpers.to_bin(padding_original, BYTE_SIZE)
     
     #now you're done!
     return helpers.end_compress(file_in,file_out)
@@ -75,17 +69,15 @@ def decompress(file_name):
     (file_in,file_out) = helpers.start_decompress(file_name, ALG_NAME)
     
     p = file_in.tell()
-    print p
 
     # go to last byte
     file_in.seek(-8,2)
     
     # store how much padding is in second to last byte
     pad = file_in.read(BYTE_SIZE)
-    print pad
     
     padding = int(pad,2)
-    print padding
+
     # set position to start of file
     file_in.seek(p,0)
     
@@ -114,7 +106,6 @@ def decompress(file_name):
     code = i
     counter = 0
     stop = (helpers.size(file_in.name) - ((2*BYTE_SIZE) + padding + p + (header_left_original *5 * BYTE_SIZE) ))
-    print stop
 
     while (counter < stop):
         i = file_in.read(READ_IN_SIZE)
@@ -135,21 +126,6 @@ def decompress(file_name):
 # build frequency list
 def _build_freq_list (file_in):
     return helpers.freq_list(file_in, "specific")
-''' 
-    f = io.open(file_in, "r")
-    freq_dict = {}
-    byte = f.read(READ_IN_SIZE)
-    while (byte != ''):
-        if byte in freq_dict:
-            freq_dict[byte] += 1
-        else:
-            freq_dict[byte] = 1 + (ord(byte)/1000.)
-        byte = f.read(READ_IN_SIZE)
-    freq_list = []        
-    for key in freq_dict:
-        freq_list.append((freq_dict[key],key))
-    return freq_list
-'''         
 
 # builds huffman tree assuming frequency_list is a list of (f,val) tuples
 def _build_tree(frequency_list):
@@ -180,10 +156,10 @@ def _add_codes(huff_tree, dct, code) :
         _add_codes(right, dct, (code + '1'))
     return dct
 
-# l = huff._build_freq_list("../tests/ps7.py")
-# tree = _huff_build_tree(l)
-#             
-    
+### ESTIMATE ###
+
+def estimate(file_name) : 
+    return helpers.size(file_name) / 2    
     
   
 
