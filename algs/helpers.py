@@ -149,22 +149,23 @@ def freq_list_sample_size (file_name) :
 def freq_list_sample_ratio (file_name) : 
     return (size(file_name) / freq_list_sample_size(file_name))
 
-
 # start_compress returns a file that python can read from and another it can write to
 def start_compress(file_in_name, alg_name) : 
     (file_out_name, sign) = ensign(file_in_name, alg_name)  
-    file_out = io.open(file_out_name, "wb") 
+    file_out = io.open(free_name(file_out_name), "wb") 
     file_out.write(sign)
     file_in = io.FileIO(file_in_name, "r")
+#    subprocess.call(["rm", "-f", file_in_name])
     return (file_in,file_out)
 
 # end_compress closes the files and calls the writer on the intermediate file, writes the result to disk
 def end_compress(file_in,file_out) : 
     file_in.close()
     file_out.close()
-    subprocess.call([abs_path("writer"), file_out.name, file_out.name[:-1], "e"])
+    result = free_name(file_out.name[:-1])
+    subprocess.call([abs_path("writer"), file_out.name, result, "e"])
     subprocess.call(["rm", "-f", file_out.name])
-    return file_out.name[:-1]
+    return result
 
 # start_decompress returns a file that can be read in, one that can be string'd to, 
 # and another name for the final output file
@@ -188,11 +189,12 @@ def start_decompress(file_name, alg_name) :
   counter = 0
   while(zero < 2) : 
     if(counter > TOO_MUCH) : 
-        return "failure"
+        raise TypeError("File is not of dewk compressed_file type")
     elif (file_in.read(READ_IN_SIZE) == bytearray(1)) : 
         zero += 1
     counter += 1
 
+#  subprocess.call(["rm", "-f", file_name])
   return (file_in, file_out)
 
 # finishing decompression

@@ -11,7 +11,7 @@ import helpers
 import Queue
 
 READ_IN_SIZE = 1
-ALG_NAME = "huf"
+ALG_NAME = "huff"
 BYTE_SIZE = 8
 
 ### COMPRESS ###
@@ -143,7 +143,6 @@ def _build_tree(frequency_list):
 def _new_freq(lfreq,rfreq) : 
     minimum = min ((lfreq - int(lfreq)), (rfreq - int(rfreq)))
     return (int(rfreq) + int(lfreq) + minimum)
-    
 
 # codes is a dictionary of bytes and corresponding encoded strings  
 def _add_codes(huff_tree, dct, code) :

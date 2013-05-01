@@ -2,7 +2,7 @@
 CS51 Final Project
 Eamon, David, Kevin, Willy
 
-study.py by Willy Xiao and _
+study.py by Willy Xiao
 willy@chenxiao.us
 """
 # allow the system path to be recognized
@@ -21,13 +21,15 @@ algos = {
     "none" : algs.none,
     
     "fib" : algs.fib,
-    #"huff" : algs.huff,
+    "huff" : algs.huff,
     #"lzw" : algs.lzw, 
     #"seq" : algs.seq
 }
 
+# NOTE: best_alg returns the best single alg. It doesn't, however, compress a compressed file
+
 # best_alg finds the best algorithm for compression based on the 
-# first 500 bytes of the file
+# first sample_size bytes of the file (in helpers.py)
 def best_alg(file_name): 
     
     # initialize the best algorithm to none
