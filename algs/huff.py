@@ -33,7 +33,7 @@ def compress(file_in_name):
     
     for element in f_list :
         (f,val) = element
-        file_out.write(helpers.to_bin(int(f), BYTE_SIZE))
+        file_out.write(helpers.to_bin(int(f), 4* BYTE_SIZE))
         file_out.write(helpers.to_bin(ord(val),BYTE_SIZE))
         
     # get dictionary of codes for given bytes
@@ -76,7 +76,7 @@ def decompress(file_name):
     
     p = file_in.tell()
     print p
-    file_in.seek(0,0)
+
     # go to last byte
     file_in.seek(-8,2)
     
@@ -90,13 +90,13 @@ def decompress(file_name):
     file_in.seek(p,0)
     
     i = file_in.read(BYTE_SIZE)
-#FIX
+
     header_left = int(i,2)
     header_left_original = header_left
 
     freq_list = [] 
     while (header_left > 0):
-        freq = int(file_in.read(BYTE_SIZE),2)
+        freq = int(file_in.read(4*BYTE_SIZE),2)
         val = int(file_in.read(BYTE_SIZE),2)
         freq = freq + val/1000.
         header_left -= 1
@@ -113,7 +113,7 @@ def decompress(file_name):
     i = file_in.read(READ_IN_SIZE)
     code = i
     counter = 0
-    stop = (helpers.size(file_in.name) - ((2*BYTE_SIZE) + padding + p + (header_left_original *2 * BYTE_SIZE) ))
+    stop = (helpers.size(file_in.name) - ((2*BYTE_SIZE) + padding + p + (header_left_original *5 * BYTE_SIZE) ))
     print stop
 
     while (counter < stop):
