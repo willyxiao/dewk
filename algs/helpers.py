@@ -10,21 +10,33 @@ Also helps standardize everything.
 
 INTERFACE:
 
+    # signatures
     ensign(file_name, alg_name) -> new_file_name (*to write*), signature (*to append at the front*)
     unsign(file_name) -> algorithm_name (* used to uncompress *), new_file_name (* to uncompress to *)
 
+    # frequency lists and samplings
     freq_list(file_name, mode) -> 
         3 modes : 
             | "sample" -> freq_list for the first sample_size bytes
             | "specific" -> freq_list for all the bytes with decimal representation of the ascii-value of the byte
-            | "none" -> freq_list for all the bytes
+            | _ -> freq_list for all the bytes
     freq_list_sample_size(file_name) -> sample_size (* either the size of the file if it's smaller than sample size or sample size *)
     freq_list_sample_ratio(file_name) -> ratio of the whole file to the sample size
     
+    # NOTE: when compressing files, file_out for start_compress should receive a string of ascii-characters 1's and 0's. This was done to 
+    # avoid python's error with writing anything not in range 0 - 128. End compress converts that to bits. 
+    # start_decompress is the same except decompress's read-in file is also a string of 1's and 0's
+    start_compress(file_name, alg_name) -> file_in (opened file to read from), file_out (file to write strings of 1's and 0's to)
+    end_compress(file_in, file_out) -> name of compressed file (will convert file_out to bits)
+    start_decompress(file_name, alg_name) -> file_in (opened file to read from : string's of 1's and 0's), file_out
+    end_decompress(file_in, file_out) -> name of decompressed file (will convert file_out to bits)
     
-    
-
-
+    # other functions
+    free_name(file_name) -> file_name that is free (so as to not overwrite anything)
+    which_alg(compressed_file_name) -> name of compression algorithm used
+    to_bin(int, size_of_bin) -> binary representation of int with size_of_bin width
+    size(file_name) -> number of bytes in file_name
+    abs_path(file_name) -> returns the absolute os path from the file_name
 """
 import string
 import os
@@ -56,46 +68,42 @@ def ensign(file_name, alg_name) :
 # unsign(file_name) returns the compression algorithm used and a name of an
 # uncompressed file that can be saved to disk
 def unsign(file_name) : 
-    try: 
-        with open(file_name, "r") as file :     
+    file = open(file_name, "r")
 
-            counter = 0 
-            alg_name = "" 
-            extension_name = ""
+    counter = 0 
+    alg_name = "" 
+    extension_name = ""
 
-            # for the name of the algorithm
-            i = file.read(1)
-            while i != ZERO : 
-                alg_name += i 
-                i = file.read(1)
+    # for the name of the algorithm
+    i = file.read(1)
+    while i != ZERO : 
+        alg_name += i 
+        i = file.read(1)
 
-                # this checks if counter goes over the amount before giving up
-                counter += counter
-                if counter > TOO_MUCH :
-                    raise IncorrectFileType
-                    break
+        # this checks if counter goes over the amount before giving up
+        counter += counter
+        if counter > TOO_MUCH :
+            raise TypeError("File is not of type dewk compressed_file")
+            break
     
-            # for the name of the extension
-            i = file.read(1)
-            while i != ZERO : 
-                extension_name += i
-                i = file.read(1)
+    # for the name of the extension
+    i = file.read(1)
+    while i != ZERO : 
+        extension_name += i
+        i = file.read(1)
 
-                counter += counter
-                if counter > TOO_MUCH :
-                    raise IncorrectFileType
-                    break
+        counter += counter
+        if counter > TOO_MUCH :
+            raise TypeError("File is not of type dewk compressed_file")
+            break
             
-            # new file name
-            period_at = string.rfind(file_name, "."); 
+    # new file name
+    period_at = string.rfind(file_name, "."); 
             
-            new_file_name = file_name[:period_at] + "." + extension_name
+    new_file_name = file_name[:period_at] + "." + extension_name
 
-            return (alg_name, free_name(new_file_name))
+    return (alg_name, free_name(new_file_name))
         
-    except IOError : 
-        print ("Error opening " + file_name);     
-
 # sample size of the frequency list
 sample_size = 2000
 
@@ -218,9 +226,15 @@ def which_alg(file_name) :
 # converts an integer to its binary representation for the size wanted
 def to_bin(n, size) : 
     b = bin(n)[2:]
+
     # append zeroes to the front of binary number if it isn't full
     while(len(b) < size) : 
         b = '0' + b
+
+    # error checking
+    if len(b) > size : 
+        raise TypeError("Binary of integer overflows width. wx.")
+
     return b
     
 # returns the size of the file
