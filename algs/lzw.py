@@ -32,7 +32,7 @@ def compress(file_in_name):
     i = file_in.read(READ_IN_SIZE)
     
     while (i != ''):
-        enc = _encode(ord(i)) 
+        enc = _encode(i) 
         file_out.write(enc)
         i = file_in.read(READ_IN_SIZE)
         
@@ -40,7 +40,7 @@ def compress(file_in_name):
     
 # encodes a string into a list of codes
 def _encode(input):
-    code_table = dict((char(index), char(index)) for index in range(256))
+    code_table = dict((chr(index), chr(index)) for index in range(256))
     code_nums = 256
 
     encoded = []
@@ -49,12 +49,12 @@ def _encode(input):
     for char in input: 
         code_output = char_input + char
 
-        if code_output in dictionary:
+        if code_output in code_table:
             char_input = code_output
         else:
             encoded.append(code_table[char_input])
             code_table[code_output] = code_nums
-            code nums += 1
+            code_nums += 1
             char_input = char
 
     if char_input:
@@ -84,7 +84,7 @@ def decompress(file_name):
     return helpers.end_decompress(file_in, file_out)    
     
 def _decode(encoded):
-    code_table = dict((char(index), char(index)) for index in range(256))
+    code_table = dict((chr(index), chr(index)) for index in range(256))
     code_nums = 256
 
     char_input = encoded.pop(0)
