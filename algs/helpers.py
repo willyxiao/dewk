@@ -2,7 +2,7 @@
 CS51 Final Project
 Eamon, David, Kevin, Willy
 
-helpers.py by Willy Xiao
+helpers.py by Willy Xiao & Kevin Eskici
 willy@chenxiao.us
 
 helpers.py is a module that includes helper functions for encoding. 
@@ -194,7 +194,7 @@ def start_decompress(file_name, alg_name) :
         zero += 1
     counter += 1
 
-#  subprocess.call(["rm", "-f", file_name])
+  #  subprocess.call(["rm", "-f", file_name])
   return (file_in, file_out)
 
 # finishing decompression
@@ -249,4 +249,12 @@ def abs_path(file_name) :
     pos = string.rfind(path, "/")
     path = path[:(pos + 1)]
     return path + file_name
+    
+# inverts a dictionary
+def inverse_dict(codes):
+    inv_codes = {}
+    for code in codes:
+        inv_codes[codes[code]] = code
+    return inv_codes    
+        
 
