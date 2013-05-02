@@ -61,9 +61,9 @@ def decompress(file_name):
     
     while (len(n) == size) : 
         helpers.write_string(file_out, string)
-        
+                
         string = codes[int(n, 2)]         
-        
+        n = file_in.read(size)        
 
     return size #helpers.end_decompress(file_in, file_out) 
 
