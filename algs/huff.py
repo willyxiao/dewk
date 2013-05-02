@@ -98,9 +98,7 @@ def decompress(file_name):
     codes = _add_codes(_build_tree(freq_list),{},'')
     
     # flip dictionary 
-    inv_codes = {}
-    for code in codes:
-        inv_codes[codes[code]] = code
+    inv_codes = helpers.inverse_dict(codes)
 
     i = file_in.read(READ_IN_SIZE)
     code = i
@@ -158,7 +156,26 @@ def _add_codes(huff_tree, dct, code) :
 ### ESTIMATE ###
 
 def estimate(file_name) : 
-    return helpers.size(file_name) / 2    
+    
+    #frequency list sample of the file
+    freq_list = helpers.freq_list(file_name, "sample")
+    
+    # build dictionary
+    codes = _add_codes(_build_tree(freq_list),{},'')
+    
+    sample_size = helpers.freq_list_sample_size(file_name)
+    
+    # find total bits in first compressed sample_size bytes
+    total_bits = 0
+    for pair in freq_list:
+        (freq, val) = pair
+        total_bits += freq * len(codes[val])
+        
+    header_size = len(freq_list) * 5
+        
+    total_bytes = BYTE_SIZE + header_size + ((helpers.size(file_name)/sample_size)*total_bits / BYTE_SIZE)     
+        
+    return total_bytes  
     
   
 
