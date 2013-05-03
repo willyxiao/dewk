@@ -22,7 +22,7 @@ algos = {
     
     "fib" : algs.fib,
     "huff" : algs.huff,
-    #"lzw" : algs.lzw, 
+    "lzw" : algs.lzw, 
     #"seq" : algs.seq
 }
 
