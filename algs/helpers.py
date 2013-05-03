@@ -13,6 +13,7 @@ INTERFACE:
     # signatures
     ensign(file_name, alg_name) -> new_file_name (*to write*), signature (*to append at the front*)
     unsign(file_name) -> algorithm_name (* used to uncompress *), new_file_name (* to uncompress to *)
+    which_alg(compressed_file_name) -> name of compression algorithm used
 
     # frequency lists and samplings
     freq_list(file_name, mode) -> 
@@ -31,12 +32,15 @@ INTERFACE:
     start_decompress(file_name, alg_name) -> file_in (opened file to read from : string's of 1's and 0's), file_out
     end_decompress(file_in, file_out) -> name of decompressed file (will convert file_out to bits)
     
-    # other functions
+    # file / system functions
     free_name(file_name) -> file_name that is free (so as to not overwrite anything)
-    which_alg(compressed_file_name) -> name of compression algorithm used
-    to_bin(int, size_of_bin) -> binary representation of int with size_of_bin width
     size(file_name) -> number of bytes in file_name
     abs_path(file_name) -> returns the absolute os path from the file_name
+    inverse_dict(dic) -> returns a dictionary with keys and values flipped
+
+    # file writing functions    
+    to_bin(int, size_of_bin) -> binary representation of int with size_of_bin width
+    write_string(file_out, string) -> writes the string as 1's and 0's to file
 """
 import string
 import os
@@ -46,6 +50,7 @@ import io
 ZERO = bytearray(1)
 TOO_MUCH = 100
 READ_IN_SIZE = 1
+BYTE_SIZE = 8
 
 # ensign(file_name, alg_name) returns the signature for the algorithm and file type, and a new file name
 def ensign(file_name, alg_name) : 
@@ -103,6 +108,11 @@ def unsign(file_name) :
     new_file_name = file_name[:period_at] + "." + extension_name
 
     return (alg_name, free_name(new_file_name))
+
+# this returns the name of the algorithm used
+def which_alg(file_name) : 
+    (alg_name, trash) = unsign(file_name)
+    return alg_name
         
 # sample size of the frequency list
 sample_size = 2000
@@ -155,7 +165,6 @@ def start_compress(file_in_name, alg_name) :
     file_out = io.open(free_name(file_out_name), "wb") 
     file_out.write(sign)
     file_in = io.FileIO(file_in_name, "r")
-#    subprocess.call(["rm", "-f", file_in_name])
     return (file_in,file_out)
 
 # end_compress closes the files and calls the writer on the intermediate file, writes the result to disk
@@ -219,25 +228,6 @@ def free_name(name) :
         new_name = name[:type_index] + str(c) + name[type_index:]
         c += 1
     return new_name
-
-# this returns the name of the algorithm used
-def which_alg(file_name) : 
-    (alg_name, trash) = unsign(file_name)
-    return alg_name
-
-# converts an integer to its binary representation for the size wanted
-def to_bin(n, size) : 
-    b = bin(n)[2:]
-
-    # append zeroes to the front of binary number if it isn't full
-    while(len(b) < size) : 
-        b = '0' + b
-
-    # error checking
-    if len(b) > size : 
-        raise TypeError("Binary of integer overflows width. wx.")
-
-    return b
     
 # returns the size of the file
 def size(file_name) : 
@@ -251,10 +241,33 @@ def abs_path(file_name) :
     return path + file_name
     
 # inverts a dictionary
-def inverse_dict(codes):
-    inv_codes = {}
-    for code in codes:
-        inv_codes[codes[code]] = code
-    return inv_codes    
+def inverse_dict(dic):
+    inv_dic = {}
+    for key in dic:
+        inv_dic[dic[key]] = key
+    return inv_dic    
         
+# converts an integer to its binary representation for the size wanted
+def to_bin(n, size) : 
+    b = bin(n)[2:]
 
+    # append zeroes to the front of binary number if it isn't full
+    while(len(b) < size) : 
+        b = '0' + b
+
+    # error checking
+    if len(b) > size : 
+        raise TypeError("Binary of integer overflows width. wx.")
+
+    return b
+
+# from_bin converts a binary number to decimal 
+def from_bin (n) : 
+    return int(n, 2)
+    
+# writes the string as 1's and 0's to the file
+def write_string(file_out, string) : 
+    for n in string : 
+        byte = to_bin(ord(n), BYTE_SIZE)
+        file_out.write(byte)
+        
