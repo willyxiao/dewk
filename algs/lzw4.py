@@ -2,16 +2,14 @@
 CS51 Final Project
 Eamon, David, Kevin, Willy
 
-lzw.py by Willy Xiao, Eamon Obrien, Kevin Eskici
+lzw.py by Willy Xiao, Kevin Eskici, Eamon Obrien
 
-1. fib.compress compresses a file outputting FileName.fib to disk. 
-2. fib.decompress takes in a file outputting FileName.FileType to disk. 
+lots of hfrom : http://marknelson.us/2011/11/08/lzw-revisited/
 """
 import unittest 
 import subprocess
 import string
 import helpers
-
 
 READ_IN_SIZE = 1 
 ALG_NAME = "lzw"
@@ -29,8 +27,7 @@ def compress(file_in_name):
 
     # STEP 1 : Create the code dictionary
     counter = _compress_run(file_in, file_out, 0, "none")
-#    return counter
-#'''
+
     # STEP 2 : Write out the length that each int will need
     # bit_len is the length required to represent each integer
     bit_len = len(bin(counter)) - 2
@@ -45,7 +42,7 @@ def compress(file_in_name):
     _compress_run(file_in, file_out, bit_len, "write")
     
     return helpers.end_compress(file_in,file_out)
-#'''
+
 ###DECOMPRESS###
 
 # decompress(file_name) takes in a file of type .fib and outputs uncompressed file to disk
@@ -131,28 +128,10 @@ def _compress_run (file_in, file_out, bit_len, mode) :
         file_out.write(helpers.to_bin(codes[string], bit_len))
     
     return counter
-    # return codes
 
 ### ESTIMATE ###
 def estimate(file_name) : 
 
     ##TODO
     return "TODO"
-
-### EXTRAS
-'''    codes = initial_dict() # initial dictionary for each unique char
-    string = '' # empty string starting-off
-    c = file_in.read(READ_IN_SIZE)
-    counter = 255
-    
-    while c != '' : 
-        string += c 
-
-        if not (string in codes) : 
-            codes[string] = counter
-            counter += 1            
-            string = string[-1:]
-        
-        c = file_in.read(READ_IN_SIZE)
-'''
 
