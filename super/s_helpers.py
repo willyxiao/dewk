@@ -10,6 +10,8 @@ import sys
 sys.path.append('../algs')
 import helpers
 
+import os
+
 # assert that file_name is a file
 def check_file(file_name) : 
     if not os.path.isfile(file_name) :         

@@ -25,7 +25,7 @@ READ_IN_SIZE = 1
 def compress(dir_name) : 
     s_helpers.check_dir(dir_name)
     _dc_individuals(dir_name, "compress")
-
+    ls
             
     return "hello"
 

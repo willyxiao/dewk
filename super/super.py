@@ -17,6 +17,8 @@ import subprocess
 import sys
 import os
 
+DEWK = ".dewk"
+
 def compress(file_name) :
 
     # ensure file_name is actually the name of a file
@@ -27,12 +29,14 @@ def compress(file_name) :
     
     # if the compression fails, then raise an error
     try : 
-        compressed_file = alg.compress(file_name)
+        intermediate = alg.compress(file_name)
     except : 
         print "Unexpected error:", sys.exc_info()[0]
         raise
     # else remove the original file and return the name of the compressed file
     else : 
+        compressed_file = os.path.splitext(intermediate)[0] + DEWK        
+        subprocess.call(["mv", intermediate, compressed_file])
         subprocess.call(["rm", "-f", file_name])
         return compressed_file
 
