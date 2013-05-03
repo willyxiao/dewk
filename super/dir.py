@@ -38,6 +38,9 @@ def decompress(compressed_name) :
 # dc_individuals either decompresses or compresses all of the directories
 # in place within a directory
 def _dc_individuals(dir_name, mode) : 
+    compress = (mode == "compress")
+    decompress = (mode == "decompress")
+
     items = os.listdir(dir_name) 
     
     for item in items : 
@@ -45,9 +48,9 @@ def _dc_individuals(dir_name, mode) :
         if os.path.isdir(name) : 
             _dc_individuals(name, mode)
         else : 
-            if mode == "compress" :         
+            if compress :         
                 super.compress(name)            
-            elif mode == "decompress" : 
+            elif decompress : 
                 super.decompress(name) 
             else : 
                 raise TypeError("dir.py : dc_individuals has incorrect mode input")
