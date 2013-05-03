@@ -152,11 +152,8 @@ def _decode (content, dictionary) :
                 content.insert(i+1,tup[1])
     return content
 
-#compress("../tests/ps7.txt")
-#decompress("../tests/ps7.seq")
+compress("../tests/ps7.txt")
+decompress("../tests/ps7.seq")
 
-#compress("../tests/st.txt")
-#decompress("../tests/st.seq")
-
-compress("../tests/small3.bmp")
-decompress("../tests/small3.bmp")
+compress("../tests/st.txt")
+decompress("../tests/st.seq")
