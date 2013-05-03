@@ -37,6 +37,7 @@ INTERFACE:
     to_bin(int, size_of_bin) -> binary representation of int with size_of_bin width
     size(file_name) -> number of bytes in file_name
     abs_path(file_name) -> returns the absolute os path from the file_name
+    inverse_dict(dic) -> returns a dictionary with keys and values flipped
 """
 import string
 import os
@@ -251,10 +252,10 @@ def abs_path(file_name) :
     return path + file_name
     
 # inverts a dictionary
-def inverse_dict(codes):
-    inv_codes = {}
-    for code in codes:
-        inv_codes[codes[code]] = code
-    return inv_codes    
+def inverse_dict(dic):
+    inv_dic = {}
+    for key in dic:
+        inv_dic[dic[key]] = key
+    return inv_dic    
         
 

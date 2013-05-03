@@ -165,6 +165,7 @@ def estimate(file_name) :
     
     sample_size = helpers.freq_list_sample_size(file_name)
     
+    
     # find total bits in first compressed sample_size bytes
     total_bits = 0
     for pair in freq_list:
@@ -173,7 +174,7 @@ def estimate(file_name) :
         
     header_size = len(freq_list) * 5
         
-    total_bytes = BYTE_SIZE + header_size + ((helpers.size(file_name)/sample_size)*total_bits / BYTE_SIZE)     
+    total_bytes = 2*BYTE_SIZE + header_size + ((helpers.size(file_name)/sample_size)*total_bits / BYTE_SIZE)     
         
     return total_bytes  
     
