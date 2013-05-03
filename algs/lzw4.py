@@ -29,7 +29,8 @@ def compress(file_in_name):
 
     # STEP 1 : Create the code dictionary
     counter = _compress_run(file_in, file_out, 0, "none")
-    
+#    return counter
+#'''
     # STEP 2 : Write out the length that each int will need
     # bit_len is the length required to represent each integer
     bit_len = len(bin(counter)) - 2
@@ -42,9 +43,9 @@ def compress(file_in_name):
     
     # STEP 3 : Run again, writing out codes for the file
     _compress_run(file_in, file_out, bit_len, "write")
-            
+    
     return helpers.end_compress(file_in,file_out)
-
+#'''
 ###DECOMPRESS###
 
 # decompress(file_name) takes in a file of type .fib and outputs uncompressed file to disk
@@ -52,20 +53,44 @@ def decompress(file_name):
 
     (file_in, file_out) = helpers.start_decompress(file_name, ALG_NAME)  
 
-    codes = helpers.inverse_dict(initial_dict()) 
+    codes = helpers.inverse_dict(initial_dict())
 
     size = int(file_in.read(BYTE_SIZE), 2)
     
-    n = file_in.read(size)
-    string = chr(n)
+    b = file_in.read(size)
+    n = helpers.from_bin(b)
+    string = codes[n]
+    counter = 256
     
-    while (len(n) == size) : 
-        helpers.write_string(file_out, string)
-                
-        string = codes[int(n, 2)]         
-        n = file_in.read(size)        
+    while (len(b) == size) : 
 
-    return size #helpers.end_decompress(file_in, file_out) 
+        # write out current string
+        helpers.write_string(file_out, string)
+
+        # file_in.read might return '' in which case from_bin won't work, break the loop in that case
+        try : 
+            # read next integer from file
+            b = file_in.read(size)
+            n = helpers.from_bin(b)            
+        except ValueError: 
+            break 
+
+        # otherwise continue with decoding
+        else :        
+
+            # create new string (if n is not yet in codes, that means there's repetition
+            if (n in codes) : 
+                string += codes[n][:1]
+            else : 
+                string += string[:1]
+
+            codes[counter] = string
+            counter += 1    
+
+            # string to write out is the string taken in
+            string = codes[n]
+
+    return helpers.end_decompress(file_in, file_out) 
 
 # initial dictionary used for compression and decompression    
 def initial_dict () : 
@@ -81,10 +106,12 @@ def initial_dict () :
 # create_codes takes in a file_in, a file_out, and a mode which determines if items should be writ
 def _compress_run (file_in, file_out, bit_len, mode) : 
 
+    writer = (mode == "write")
+    
     codes = initial_dict() # initial dictionary for each unique char
     string = '' # empty string starting-off
     c = file_in.read(READ_IN_SIZE)
-    counter = 255
+    counter = 256
     
     while c != '' : 
         string += c 
@@ -92,7 +119,7 @@ def _compress_run (file_in, file_out, bit_len, mode) :
         if not (string in codes) : 
             codes[string] = counter
 
-            if mode == "write" : 
+            if writer : 
                 file_out.write(helpers.to_bin(codes[string[:-1]], bit_len))
                 
             counter += 1            
@@ -100,7 +127,11 @@ def _compress_run (file_in, file_out, bit_len, mode) :
         
         c = file_in.read(READ_IN_SIZE)
     
+    if writer : 
+        file_out.write(helpers.to_bin(codes[string], bit_len))
+    
     return counter
+    # return codes
 
 ### ESTIMATE ###
 def estimate(file_name) : 
