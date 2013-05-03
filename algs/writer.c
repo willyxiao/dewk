@@ -37,13 +37,13 @@ int main(int argc, char* argv[])
     // check file is open
     if(file_read == NULL)
     {
-        printf("Could not read: %s\n", argv[1]);
+        printf("writer.c 40\nCould not read file: %s\n", argv[1]);
         fclose(file_write); 
         return 1;
     }
     else if (file_write == NULL)
     {
-        printf("Could not write: %s\n", argv[2]); 
+        printf("writer.c 46\nCould not write file: %s\n", argv[2]); 
         fclose(file_read); 
         return 1; 
     }
@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
             {
                 fclose(file_read);
                 fclose(file_write); 
-                printf("Wrong file type"); 
+                printf("writer.c 75\nFile not of type dewk compressed_file\n"); 
                 return 1; 
             }
         }
@@ -109,10 +109,10 @@ int main(int argc, char* argv[])
             }
             else
             {
-                printf("Read this: %c\n", buffer); 
                 fclose(file_read);
                 fclose(file_write); 
-                printf("Something went wrong..."); 
+                printf("writer.c\nRead this char: %c\n", buffer); 
+                printf("Should have been either a 1 or a 0\n"); 
                 return 1; 
             }
 

@@ -147,9 +147,6 @@ def estimate(file_name) :
     return (total_bytes * helpers.freq_list_sample_ratio(file_name))
 
 ###tests!###
-def sim_test() : 
-    print "hello, world!" 
-    
 def test () : 
     decompress(compress("../tests/001.jpg"))
     decompress(compress("../tests/canon.mid"))
