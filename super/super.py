@@ -36,8 +36,8 @@ def compress(file_name) :
     # else remove the original file and return the name of the compressed file
     else : 
         compressed_file = os.path.splitext(intermediate)[0] + DEWK        
-        subprocess.call(["mv", intermediate, compressed_file])
-        subprocess.call(["rm", "-f", file_name])
+        os.rename(intermediate, compressed_file)
+        os.remove(file_name)
         return compressed_file
 
 def decompress(file_name) : 
@@ -54,6 +54,6 @@ def decompress(file_name) :
         print "Unexpected error:", sys.exec_info()[0]
         raise
     else : 
-        subprocess.call(["rm", "-f", file_name])
+        os.remove(file_name)
         return decompressed_file
         

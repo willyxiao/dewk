@@ -178,7 +178,8 @@ def end_compress(file_in,file_out) :
     file_out.close()
     result = free_name(file_out.name[:-1])
     subprocess.call([abs_path("writer"), file_out.name, result, "e"])
-    subprocess.call(["rm", "-f", file_out.name])
+    os.remove(file_out.name)
+#    subprocess.call(["rm", "-f", file_out.name])
     return result
 
 # start_decompress returns a file that can be read in, one that can be string'd to, 
@@ -217,8 +218,10 @@ def end_decompress(file_in, file_out) :
     file_out.close()
     output = free_name(file_in.name[:-2])
     subprocess.call([abs_path("writer"), file_out.name, output, "no"])
-    subprocess.call(["rm", "-f", file_out.name])
-    subprocess.call(["rm", "-f", file_in.name])
+    os.remove(file_in.name)
+    os.remove(file_out.name)
+#    subprocess.call(["rm", "-f", file_out.name])
+#    subprocess.call(["rm", "-f", file_in.name])
     return output
     
 # free_name takes in a name and returns a new_name that doesn't overwrite any 

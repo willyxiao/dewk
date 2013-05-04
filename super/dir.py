@@ -120,14 +120,14 @@ def unpack(path, compressed_file) :
             is_eof = True 
         
         else : 
-    
-            (size, trash) = struct.unpack("I", compressed_file.read(4)) # 4 is the size of an unsigned int
+            tmp = struct.unpack("I", compressed_file.read(4)) # 4 is the size of an unsigned int
+            size = tmp[0]
             file_out = open(file_name, "w")
             file_out.write(compressed_file.read(size))
             file_out.close () 
 
     for file_name in os.listdir(dir_name) : 
-        file_name = os.path.join(dir_name, f) 
+        file_name = os.path.join(dir_name, file_name) 
         
         f = open(file_name, "r") 
         
@@ -143,8 +143,6 @@ def unpack(path, compressed_file) :
 
     return dir_name
             
-                     
-
 
 # dc_individuals either decompresses or compresses all of the directories
 # in place within a directory
