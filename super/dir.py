@@ -140,10 +140,8 @@ def unpack(path, compressed_file) :
     to_del = compressed_file.name            
     compressed_file.close()
     os.remove(to_del)
-
     return dir_name
             
-
 # dc_individuals either decompresses or compresses all of the directories
 # in place within a directory
 def _dc_individuals(dir_name, mode) : 
