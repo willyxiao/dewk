@@ -27,8 +27,15 @@ def compress(file_in_name):
     file_out.write(dictionary)
     file_out.write(helpers.to_bin(ord("\x00"),BYTE_SIZE))
 
-    for i in json.dumps(encoded) :
-        content = content + (helpers.to_bin(ord(i),BYTE_SIZE))
+    for i in encoded :
+        if type(i) == int :
+            i = str(i)
+            content = conversion(0, i, content)
+        else :
+            content = conversion(1, i, content)
+
+    #for i in json.dumps(encoded) :
+    #    content = content + (helpers.to_bin(ord(i),BYTE_SIZE))
 
     file_out.write(content)
 
@@ -50,20 +57,55 @@ def decompress(file_name):
 
     dictionary = pickle.loads(dictionary)
 
-    i = file_in.read(BYTE_SIZE)
-    content = ''
+    i = file_in.read(1)
+    content = []
 
     while i != '' :
-        content = content + chr(int(i,2))
-        i = file_in.read(BYTE_SIZE)
-
-    content = json.loads(content)
+        if i == '0' :
+            acc = ''
+            while i != "00000000" and i != '' :
+                i = file_in.read(BYTE_SIZE)
+                if i != "00000000" and i != '' :
+                    acc = acc + chr(int(i,2))
+            if acc != '\x00' and acc != '' :
+                content.append(int(acc))
+            i = file_in.read(1)
+        elif i == '1' :
+            acc = ''
+            while i != "00000000" and i != '' :
+                i = file_in.read(BYTE_SIZE)
+                if i != "00000000" and i != '' :
+                    acc = acc + chr(int(i,2))
+            if acc != '\x00' and acc != '' :
+                content.append(acc)
+            i = file_in.read(1)
+        else :
+            raise TypeError ("must start with 0 or 1")
+            
+    #content = json.loads(content)    
     content = _decode(content, dictionary)
 
     for i in content:
-        file_out.write(helpers.to_bin(ord(i),BYTE_SIZE))
-
+        if len(i) == 1 :
+            file_out.write(helpers.to_bin(ord(i),BYTE_SIZE))
+        else :
+            for j in i :
+                file_out.write(helpers.to_bin(ord(j),BYTE_SIZE))
+                
     return helpers.end_decompress(file_in,file_out)
+
+# HELPERS
+
+def conversion (id, i, content) :
+    if len(i) == 1 :
+        content = content + str(id) + (helpers.to_bin(ord(i),BYTE_SIZE))
+        content = content + (helpers.to_bin(ord("\x00"),BYTE_SIZE))
+    else :
+        content = content + str(id)
+        for j in i :
+            content = content + (helpers.to_bin(ord(j),BYTE_SIZE))
+        content = content + (helpers.to_bin(ord("\x00"),BYTE_SIZE))
+    return content
 
 # ENCODE
 
@@ -155,5 +197,5 @@ def _decode (content, dictionary) :
 compress("../tests/ps7.txt")
 decompress("../tests/ps7.seq")
 
-compress("../tests/st.txt")
-decompress("../tests/st.seq")
+#compress("../tests/st.txt")
+#decompress("../tests/st.seq")

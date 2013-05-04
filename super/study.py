@@ -22,7 +22,7 @@ algos = {
     
     "fib" : algs.fib,
     "huff" : algs.huff,
-    #"lzw" : algs.lzw, 
+    "lzw" : algs.lzw, 
     #"seq" : algs.seq
 }
 
@@ -31,17 +31,20 @@ algos = {
 # best_alg finds the best algorithm for compression based on the 
 # first sample_size bytes of the file (in helpers.py)
 def best_alg(file_name): 
-    
+ 
+    # for testing
+    alg_name = random.choice(algos.keys())
+    best_alg = algos[alg_name]   
     # initialize the best algorithm to none
-    best_estimate = algs.none.estimate(file_name)
-    best_alg = algs.none
+#    best_estimate = algs.none.estimate(file_name)
+#    best_alg = algs.none
 
     # if any of the algorithms are better, then substitute it in for the best
-    for alg_name in algos : 
-        estimate = algos[alg_name].estimate(file_name)
-        if best_estimate > estimate : 
-            best_estimate = estimate
-            best_alg = algos[alg_name]
+#    for alg_name in algos : 
+#        estimate = algos[alg_name].estimate(file_name)
+#        if best_estimate > estimate : 
+#            best_estimate = estimate
+#            best_alg = algos[alg_name]
     
     # return the best algorithm
     return best_alg
