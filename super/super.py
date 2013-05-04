@@ -23,7 +23,7 @@ def compress(file_name) :
 
     # ensure file_name is actually the name of a file
     s_helpers.check_file(file_name) 
-        
+    
     # best_algorithm based upon each alg's estimation
     alg = study.best_alg(file_name)
     

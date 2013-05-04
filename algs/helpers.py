@@ -29,6 +29,7 @@ INTERFACE:
     # start_decompress is the same except decompress's read-in file is also a string of 1's and 0's
     start_compress(file_name, alg_name) -> file_in (opened file to read from), file_out (file to write strings of 1's and 0's to)
     end_compress(file_in, file_out) -> name of compressed file (will convert file_out to bits)
+    
     start_decompress(file_name, alg_name) -> file_in (opened file to read from : string's of 1's and 0's), file_out
     end_decompress(file_in, file_out) -> name of decompressed file (will convert file_out to bits)
     
@@ -157,7 +158,11 @@ def freq_list_sample_size (file_name) :
 
 # returns the size of the file over the size of the sample
 def freq_list_sample_ratio (file_name) : 
-    return (size(file_name) / freq_list_sample_size(file_name))
+    
+    try : 
+        return (size(file_name) / freq_list_sample_size(file_name))
+    except ZeroDivisionError : 
+        return 0
 
 # start_compress returns a file that python can read from and another it can write to
 def start_compress(file_in_name, alg_name) : 
