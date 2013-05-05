@@ -20,7 +20,6 @@ lzw pseudo-code for compression:
 
 **lots of help from : http://marknelson.us/2011/11/08/lzw-revisited/
 """
-import unittest 
 import subprocess
 import string
 import helpers
@@ -115,7 +114,7 @@ def initial_dict () :
     return codes
 
 # compress_run takes in a file_in, a file_out, 
-# and a mode which determines if items should be writ
+# and a mode which determines if items should be written
 def _compress_run (file_in, file_out, bit_len, mode) : 
 
     writer = (mode == "write")
@@ -146,8 +145,13 @@ def _compress_run (file_in, file_out, bit_len, mode) :
     
     return counter
 
+sample_size = 5000
+
+import os
+import math
+
 ### ESTIMATE ###
 def estimate(file_name) : 
-    # TODO
-    return helpers.size(file_name) + 1
+    return helpers.estimate_cr(file_name, compress, 
+        math.log, sample_size)
 

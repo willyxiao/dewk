@@ -33,20 +33,20 @@ algos = {
 def best_alg(file_name): 
  
     # for testing
-    alg_name = random.choice(algos.keys())
-    best_alg = algos[alg_name]
-    best_estimate = best_alg.estimate(file_name)   
+#    alg_name = random.choice(algos.keys())
+#    best_alg = algos[alg_name]
+#    best_estimate = best_alg.estimate(file_name)   
  
     # initialize the best algorithm to none
-#    best_estimate = algs.none.estimate(file_name)
-#    best_alg = algs.none
+    best_estimate = algs.none.estimate(file_name)
+    best_alg = algs.none
 
     # if any of the algorithms are better, then substitute it in for the best
-#    for alg_name in algos : 
-#        estimate = algos[alg_name].estimate(file_name)
-#        if best_estimate > estimate : 
-#            best_estimate = estimate
-#            best_alg = algos[alg_name]
+    for alg_name in algos : 
+        estimate = algos[alg_name].estimate(file_name)
+        if best_estimate > estimate : 
+            best_estimate = estimate
+            best_alg = algos[alg_name]
     
     print "Best Algorithm: " + alg_name
     print "Estimated Size: " + str(best_estimate)

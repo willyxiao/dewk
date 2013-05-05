@@ -166,25 +166,46 @@ def _add_codes(huff_tree, dct, code) :
         _add_codes(right, dct, (code + '1'))
     return dct
 
-### ESTIMATE ###
 
+### ESTIMATE ###
 def estimate(file_name) : 
-    
+
     #frequency list sample of the file
     freq_list = helpers.freq_list(file_name, "sample")
     
+    freq_dict = {}
+    
+    if helpers.freq_list_sample_ratio(file_name) != 1 and len(freq_list) < 256: 
+
+        for n in freq_list : 
+            (fr, c) = n 
+            freq_dict[c] = float(fr)
+    
+        i = 0 
+        total_missing = 0
+        while (i < 256) : 
+            if chr(i) not in freq_dict : 
+                freq_dict[i] = 1
+                total_missing += 1
+            i += 1
+        
+        prob_dict = {}
+        
+        for f in freq_dict : 
+            prob_dict[f] = freq_dict[f] / (helpers.freq_list_sample_size(file_name) + total_missing)
+        
+        to_simulate = helpers.size(file_name) - helpers.freq_list_sample_size(file_name) 
+        
+        for f in prob_dict : 
+            freq_dict[f] += (to_simulate * prob_dict[f]) 
+        
+        freq_list = []
+        for key in freq_dict : 
+            freq_list.append((freq_dict[key], key))
+
     # build dictionary
     codes = _add_codes(_build_tree(freq_list),{},'')
-    
-    if not helpers.freq_list_sample_ratio(file_name):
-        # get proportion of symbols remaining    
-        factor = 256. / len(freq_list)
-    
-        # get sample size
-        sample_size = helpers.freq_list_sample_size(file_name)
-           
-    
-    
+        
     # find total bits in first compressed sample_size bytes
     total_bits = 0
     for pair in freq_list:
@@ -193,12 +214,6 @@ def estimate(file_name) :
         
     header_size = len(freq_list) * 5
         
-    total_bytes = 2*BYTE_SIZE + header_size + \
-        (helpers.freq_list_sample_ratio(file_name)*total_bits / BYTE_SIZE)     
-        
+    total_bytes = 2*BYTE_SIZE + header_size + total_bits / BYTE_SIZE     
+
     return total_bytes  
-    
-  
-
-
-

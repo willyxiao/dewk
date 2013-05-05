@@ -23,7 +23,7 @@ INTERFACE:
             | _ -> freq_list for all the bytes
     freq_list_sample_size(file_name) -> sample_size (* either the size of the file if it's smaller than sample size or sample size *)
     freq_list_sample_ratio(file_name) -> ratio of the whole file to the sample size
-    
+        
     # NOTE: when compressing files, file_out for start_compress should receive a string of ascii-characters 1's and 0's. This was done to 
     # avoid python's error with writing anything not in range 0 - 128. End compress converts that to bits. 
     # start_decompress is the same except decompress's read-in file is also a string of 1's and 0's
@@ -42,6 +42,10 @@ INTERFACE:
     # file writing functions    
     to_bin(int, size_of_bin) -> binary representation of int with size_of_bin width
     write_string(file_out, string) -> writes the string as 1's and 0's to file
+
+    # abstraction for estimate where compression ratio is relative to the sample : file_size ratio
+    estimate_cr(file_name, algorithm, rel_function, sample_size) -> estimate size for file_name
+
 """
 import string
 import os
@@ -278,4 +282,45 @@ def write_string(file_out, string) :
     for n in string : 
         byte = to_bin(ord(n), BYTE_SIZE)
         file_out.write(byte)
-        
+
+# estimate_cr estimates for any function where compression ratio is relative to sample : file_size
+def estimate_cr(file_name, compress_fun, rel_fun, sample_size) : 
+
+    # is_bigger finds if sample size is greater than file size
+    is_bigger = False 
+    
+    # to_compress_name is the compressed file that will be used later
+    to_compress_name = file_name
+    original_size = os.path.getsize(file_name) 
+    
+    # if the file size is bigger than the sample make a temporary file that's the size of sample_size
+    if os.path.getsize(file_name) > sample_size : 
+        is_bigger = True 
+
+        file_in = open(file_name, "r") 
+
+        tmp = open(free_name(file_name), "w") 
+        tmp.write(file_in.read(sample_size))         
+
+        file_in.close()
+        tmp.close()
+
+        to_compress_name = tmp.name
+
+    # compress it, get the size, remove compressed file
+    c = compress_fun(to_compress_name) 
+    size = os.path.getsize(c)
+    os.remove(c)
+    
+    if is_bigger : 
+        os.remove(to_compress_name) 
+
+        # if there was a temporary file, run the relative function on the size_ratio to 
+        # find the compression rati, then multiply original_size by that estimate
+        compress_ratio = float(size) / sample_size
+        size_ratio = float(original_size) / sample_size
+        compress_ratio -= rel_fun(size_ratio) / 100 
+        size = compress_ratio * original_size
+    
+    return size
+
