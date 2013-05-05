@@ -192,9 +192,11 @@ def estimate(file_name) :
         prob_dict = {}
         
         for f in freq_dict : 
-            prob_dict[f] = freq_dict[f] / (helpers.freq_list_sample_size(file_name) + total_missing)
+            prob_dict[f] = freq_dict[f] / \
+                (helpers.freq_list_sample_size(file_name) + total_missing)
         
-        to_simulate = helpers.size(file_name) - helpers.freq_list_sample_size(file_name) 
+        to_simulate = helpers.size(file_name) - \
+            helpers.freq_list_sample_size(file_name) 
         
         for f in prob_dict : 
             freq_dict[f] += (to_simulate * prob_dict[f]) 
@@ -211,7 +213,8 @@ def estimate(file_name) :
     if helpers.freq_list_sample_ratio(file_name) != 1 : 
         for pair in freq_list : 
             (freq, val) = pair
-            new_freq_list.append((freq * helpers.freq_list_sample_ratio(file_name), val))    
+            new_freq_list.append((freq * \
+                helpers.freq_list_sample_ratio(file_name), val))    
         freq_list = new_freq_list
 
     # find total bits in first compressed sample_size bytes

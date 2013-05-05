@@ -41,8 +41,10 @@ def compress(file_in_name):
     #now you're done!
     return helpers.end_compress(file_in,file_out)
 
-# encode(n) is a helper function that encodes a single integer into a fibonacci sequence    
-# Note: this builds upon the algorithm from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
+# encode(n) is a helper function that encodes a single 
+# integer into a fibonacci sequence    
+# Note: this builds upon the algorithm 
+# from http://en.wikipedia.org/wiki/Fibonacci_coding. 4/18/2013
 def _encode(n):
     # ensure n >= 1
     n += 1
@@ -68,7 +70,8 @@ def _encode(n):
 
 ###DECOMPRESS###
 
-# decompress(file_name) takes in a file of type .fib and outputs uncompressed file to disk
+# decompress(file_name) takes in a file of type .fib and 
+# outputs uncompressed file to disk
 def decompress(file_name):
 
     (file_in, file_out) = helpers.start_decompress(file_name, ALG_NAME)  
@@ -146,16 +149,3 @@ def estimate(file_name) :
     # returns the total_bytes times the ration of the file_size / sample_size
     return (total_bytes * helpers.freq_list_sample_ratio(file_name))
 
-###tests!###
-def test () : 
-    decompress(compress("../tests/001.jpg"))
-    decompress(compress("../tests/canon.mid"))
-    decompress(compress("../tests/ps7.txt"))
- 
-def del_tests () : 
-    subprocess.call(["rm", "-f", "../tests/001.fib"])
-    subprocess.call(["rm", "-f", "../tests/0010.jpg"])
-    subprocess.call(["rm", "-f", "../tests/canon.fib"])
-    subprocess.call(["rm", "-f", "../tests/canon0.mid"])
-    subprocess.call(["rm", "-f", "../tests/ps7.fib"])
-    subprocess.call(["rm", "-f", "../tests/ps70.txt"])
