@@ -36,6 +36,7 @@ def best_alg(file_name):
 #    alg_name = random.choice(algos.keys())
 #    best_alg = algos[alg_name]
 #    best_estimate = best_alg.estimate(file_name)   
+    print "Estimating compression sizes ..."
  
     # initialize the best algorithm to none
     best_estimate = algs.none.estimate(file_name)
@@ -50,6 +51,7 @@ def best_alg(file_name):
             best_alg = algos[alg_name]
             best_alg_name = alg_name
     
+    print "\nDone Estimating. Results : \n"
     print "Best Algorithm: " + best_alg_name
     print "Estimated Size: " + str(best_estimate)
 

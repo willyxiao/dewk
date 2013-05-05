@@ -168,6 +168,13 @@ def freq_list_sample_ratio (file_name) :
     except ZeroDivisionError : 
         return 0
 
+import time
+# compiles the c programs
+def compile_c() : 
+    subprocess.call(["clang", "-o", abs_path("reader"), abs_path("reader.c")])
+    subprocess.call(["clang", "-o", abs_path("reader"), abs_path("reader.c")])
+    time.sleep(1)
+    
 # start_compress returns a file that python can read from and another it can write to
 def start_compress(file_in_name, alg_name) : 
     (file_out_name, sign) = ensign(file_in_name, alg_name)  
@@ -181,10 +188,13 @@ def end_compress(file_in,file_out) :
     file_in.close()
     file_out.close()
     result = free_name(file_out.name[:-1])
-    subprocess.call([abs_path("writer"), file_out.name, result, "e"])
-    os.remove(file_out.name)
-#    subprocess.call(["rm", "-f", file_out.name])
-    return result
+    try : 
+        subprocess.call([abs_path("writer"), file_out.name, result, "e"])
+    except OSError: 
+        compile_c()
+    finally : 
+        os.remove(file_out.name)
+        return result
 
 # start_decompress returns a file that can be read in, one that can be string'd to, 
 # and another name for the final output file
@@ -198,35 +208,41 @@ def start_decompress(file_name, alg_name) :
   assert(alg == alg_name)
 
   #convert binary file to string of 1's and 0's
-  subprocess.call([abs_path("reader"), file_name, tmp_name, "e"])  
+  try : 
+      subprocess.call([abs_path("reader"), file_name, tmp_name, "e"])  
+  except OSError : 
+      compile_c()
+  finally : 
+    
   
-  file_out = open(tmp_name2, "w")
-  file_in = open(tmp_name, "r") 
+      file_out = open(tmp_name2, "w")
+      file_in = open(tmp_name, "r") 
   
-  #get rid of the signature at the front
-  zero = 0 
-  counter = 0
-  while(zero < 2) : 
-    if(counter > TOO_MUCH) : 
-        raise TypeError("File is not of dewk compressed_file type")
-    elif (file_in.read(READ_IN_SIZE) == bytearray(1)) : 
-        zero += 1
-    counter += 1
+      #get rid of the signature at the front
+      zero = 0 
+      counter = 0
+      while(zero < 2) : 
+        if(counter > TOO_MUCH) : 
+            raise TypeError("File is not of dewk compressed_file type")
+        elif (file_in.read(READ_IN_SIZE) == bytearray(1)) : 
+            zero += 1
+        counter += 1
 
-  #  subprocess.call(["rm", "-f", file_name])
-  return (file_in, file_out)
+      return (file_in, file_out)
 
 # finishing decompression
 def end_decompress(file_in, file_out) :   
     file_in.close()
     file_out.close()
     output = free_name(file_in.name[:-2])
-    subprocess.call([abs_path("writer"), file_out.name, output, "no"])
-    os.remove(file_in.name)
-    os.remove(file_out.name)
-#    subprocess.call(["rm", "-f", file_out.name])
-#    subprocess.call(["rm", "-f", file_in.name])
-    return output
+    try : 
+        subprocess.call([abs_path("writer"), file_out.name, output, "no"])
+    except OSError : 
+        compile_c()
+    finally : 
+        os.remove(file_in.name)
+        os.remove(file_out.name)
+        return output
     
 # free_name takes in a name and returns a new_name that doesn't overwrite any 
 # files
@@ -247,10 +263,8 @@ def size(file_name) :
 
 # returns the absolute path of a file/script inside the same directory as helpers
 def abs_path(file_name) : 
-    path = os.path.abspath(__file__)
-    pos = string.rfind(path, "/")
-    path = path[:(pos + 1)]
-    return path + file_name
+    path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(path, file_name) 
     
 # inverts a dictionary
 def inverse_dict(dic):

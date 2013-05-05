@@ -21,6 +21,7 @@ lzw pseudo-code for compression:
 **lots of help from : http://marknelson.us/2011/11/08/lzw-revisited/
 """
 import subprocess
+import sys
 import string
 import helpers
 
@@ -38,7 +39,7 @@ def compress(file_in_name):
     init_pos = file_in.tell() # start of file (will need later)
 
     # STEP 1 : Create the code dictionary
-    print "Creating codes..."
+    sys.stdout.write("Creating codes...")
     counter = _compress_run(file_in, file_out, 0, "none")
     print "Done!"
 
@@ -53,7 +54,7 @@ def compress(file_in_name):
     file_in.seek(init_pos, 0)
     
     # STEP 3 : Run again, writing out codes for the file
-    print "Writing codes..."
+    sys.stdout.write("Writing codes...")
     _compress_run(file_in, file_out, bit_len, "write")
     print "Done!"
     
