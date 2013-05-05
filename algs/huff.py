@@ -103,7 +103,9 @@ def decompress(file_name):
     i = file_in.read(READ_IN_SIZE)
     code = i
     counter = 0
-    stop = (helpers.size(file_in.name) - ((2*BYTE_SIZE) + padding + p + (header_left_original *5 * BYTE_SIZE) ))
+    # take header, padding, and signature into account
+    stop = (helpers.size(file_in.name) - ((2*BYTE_SIZE) + padding + p + \
+        (header_left_original *5 * BYTE_SIZE) ))
 
     while (counter < stop):
         i = file_in.read(READ_IN_SIZE)
@@ -163,7 +165,13 @@ def estimate(file_name) :
     # build dictionary
     codes = _add_codes(_build_tree(freq_list),{},'')
     
-    sample_size = helpers.freq_list_sample_size(file_name)
+    if not helpers.freq_list_sample_ratio(file_name):
+        # get proportion of symbols remaining    
+        factor = 256. / len(freq_list)
+    
+        # get sample size
+        sample_size = helpers.freq_list_sample_size(file_name)
+           
     
     
     # find total bits in first compressed sample_size bytes
@@ -174,7 +182,8 @@ def estimate(file_name) :
         
     header_size = len(freq_list) * 5
         
-    total_bytes = 2*BYTE_SIZE + header_size + ((helpers.size(file_name)/sample_size)*total_bits / BYTE_SIZE)     
+    total_bytes = 2*BYTE_SIZE + header_size + \
+        (helpers.freq_list_sample_ratio(file_name)*total_bits / BYTE_SIZE)     
         
     return total_bytes  
     
