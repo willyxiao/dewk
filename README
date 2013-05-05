@@ -132,18 +132,20 @@ TROUBLE_SHOOTING :
             I see you're back again...awkward...Well, if you're using a MAC, you should probably just
             give up and try running it in the appliance...it's really well tested there. 
             
-            Also you might just forget about compressing test_dir.dewk and go immediately to steps 3 - 4 substituting
-            in your own files and directories (make backups!) instead of test_dir       
+            Also you might just forget about compressing test_dir.dewk and go 
+            immediately to steps 3 - 4 substituting in your own files and 
+            directories (make backups!) instead of test_dir       
 
     (2) - 
-        seq doesn't work too well on anything other than .txt files. Don't get too fancy with seq...it might just not work...
+        seq doesn't work too well on anything other than .txt files. 
+        Don't get too fancy with seq...it might just not work...
     
     (3) - 
         A) Paused / Stopped Running : 
             Don't fret if it takes too long to compress / decompress! These functions all work really slowly
-            (like 15 mins on large-enough files) and some will break if the file is too big because there's 
-            not enough RAM. So, ironically, we can't actually compress any files that are too big, but feel 
-            free to try the compressors on say ... a video file. 
+            (like 15 mins on large-enough files) and some will break if the file is too big because computer 
+            doesn't have enough RAM. So, ironically, we can't actually compress any files that are too big, but 
+            feel free to try the compressors on say ... a video file (huffman / fib work on large files). 
         
         B) Other error messages : 
             See TROUBLE_SHOOTING (1) first. 
