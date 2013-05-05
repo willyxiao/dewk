@@ -167,7 +167,6 @@ def decompress(file_name):
 
     # read first id in dictionary
     i = file_in.read(1)
-    print i
 
     # decoded dictionary
     dictionary = {}
@@ -184,7 +183,6 @@ def decompress(file_name):
             # read until end of element (marked by nul)
             while i != "00000000" and i != '' :
                 i = file_in.read(BYTE_SIZE)
-                print i
                 if i != "00000000" and i != '' :
                     acc = acc + chr(int(i,2))
 
@@ -195,7 +193,6 @@ def decompress(file_name):
 
             # read next id
             i = file_in.read(1)
-            print i
 
         # if element is marked as a string
         elif i == '1' :
@@ -204,7 +201,6 @@ def decompress(file_name):
             # read until end of element (marked by nul)
             while i != "00000000" and i != '' :
                 i = file_in.read(BYTE_SIZE)
-                print i
                 if i != "00000000" and i != '' :
                     acc = acc + chr(int(i,2))
 
@@ -215,7 +211,6 @@ def decompress(file_name):
 
             # read next id
             i = file_in.read(1)
-            print i
 
         # otherwise raise an error if id isn't 1 or 0
         else :
@@ -426,8 +421,6 @@ def _decode (content, inv_dict) :
                 # add elements in the tuple as the original digram
                 content.insert(i,tup[0])
                 content.insert(i+1,tup[1])
-
-                print tup
 
     # woot you're done!
     return content
