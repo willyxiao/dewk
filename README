@@ -111,14 +111,13 @@ INIITAL INSTRUCTIONS FOR CODE :
                    >>> import fib
                    >>> import huff
                    >>> import lzw
-                   >>> import seq (* ERRORS : TROUBLE_SHOOTING(2) *)                                                 
+                   >>> import seq (* ERRORS JUMP TO: TROUBLE_SHOOTING(2) *)                                                 
                    >>> ALG_NAME.decompress(ALG_NAME.compress("../test_dir/ANY_FILE_NAME"))
                     (* these individual compressors won't delete the original file, so you 
                         can compare the decompressed file to the compressed file *) 
                         
-                    ERRORS : TROUBLE_SHOOTING(3)
+                    ERRORS JUMP TO : TROUBLE_SHOOTING(3)
                      
-
 TROUBLE_SHOOTING : 
     (1) -
         First time coming to (1) : 
@@ -137,7 +136,7 @@ TROUBLE_SHOOTING :
             in your own files and directories (make backups!) instead of test_dir       
 
     (2) - 
-        seq doesn't work too well on anything other than .txt files. Don't get too fancy with seq
+        seq doesn't work too well on anything other than .txt files. Don't get too fancy with seq...it might just not work...
     
     (3) - 
         A) Paused / Stopped Running : 
@@ -149,8 +148,3 @@ TROUBLE_SHOOTING :
         B) Other error messages : 
             See TROUBLE_SHOOTING (1) first. 
             Not positive - give me a call at 678-551-4386 or email willy@chenxiao.us
-                
-        
-        
-        
-        
