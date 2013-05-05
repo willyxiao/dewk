@@ -4,7 +4,21 @@ Eamon, David, Kevin, Willy
 
 lzw.py by Willy Xiao, Kevin Eskici, Eamon Obrien
 
-lots of help from : http://marknelson.us/2011/11/08/lzw-revisited/
+
+lzw pseudo-code for compression: 
+
+    initialize a code dictionary to contain all the ascii integer-values of the characters
+    initialize integer to 256
+    initialize a string to '' 
+    read a byte, attach the byte to the end of the string : 
+        if string is in the code dictionary, move on
+        else 
+            add string to code dictionary
+            increment integer
+            write string without the last character to file
+            string becomes the last character
+
+**lots of help from : http://marknelson.us/2011/11/08/lzw-revisited/
 """
 import unittest 
 import subprocess
@@ -43,16 +57,17 @@ def compress(file_in_name):
     return helpers.end_compress(file_in,file_out)
 
 ###DECOMPRESS###
-
-# decompress(file_name) takes in a file of type .fib and outputs uncompressed file to disk
 def decompress(file_name):
 
     (file_in, file_out) = helpers.start_decompress(file_name, ALG_NAME)  
 
+    # initial codes is the inverse of the original compression-codes
     codes = helpers.inverse_dict(initial_dict())
 
+    # size is the number of bits needed to represent each int
     size = int(file_in.read(BYTE_SIZE), 2)
     
+    # decompression!
     b = file_in.read(size)
     n = helpers.from_bin(b)
     string = codes[n]
@@ -99,11 +114,14 @@ def initial_dict () :
     
     return codes
 
-# create_codes takes in a file_in, a file_out, and a mode which determines if items should be writ
+# compress_run takes in a file_in, a file_out, 
+# and a mode which determines if items should be writ
 def _compress_run (file_in, file_out, bit_len, mode) : 
 
     writer = (mode == "write")
     
+    # runs through the file and either creates the code, or 
+    # creates the dictionary and writes to file
     codes = initial_dict() # initial dictionary for each unique char
     string = '' # empty string starting-off
     c = file_in.read(READ_IN_SIZE)

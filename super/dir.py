@@ -28,6 +28,12 @@ DEWK = ".dewk"
 ### COMPRESS ###
 def compress(dir_name) : 
     s_helpers.check_dir(dir_name)
+    
+    old_size = dir_size(dir_name) 
+    s_helpers.print_double_line()
+    print "COMPRESSING DIRECTORY: \"" + dir_name + "\" " 
+    print "Size: " + str(old_size) + " bytes"
+    s_helpers.print_double_line()
 
     # compress all the files
     _dc_individuals(dir_name, "compress")
@@ -39,25 +45,35 @@ def compress(dir_name) :
     # concatenates all compressed files together
     concat_files(dir_name, file_out)
     
-    compressed_name = file_out.name
-    file_out.close() 
-            
-    return compressed_name
+    file_out.close()     
+    shutil.rmtree(dir_name)           
+
+    new_size = os.path.getsize(file_out.name)
+    
+    s_helpers.print_double_line()
+    print "DIRECTORY COMPRESSED TO: \"" + file_out.name + "\" "
+    print "Original Size: " + str(old_size) + " bytes" 
+    print "New Size: " + str(new_size) + " bytes" 
+    print "Compression Ratio: " + str(float(new_size) / old_size) 
+    s_helpers.print_double_line()
+
+    return file_out.name
 
 # concat_files returns the concatenation of all the files within directory_name
 def concat_files(dir_name, file_out) : 
     s_helpers.check_dir(dir_name)
     
+    # write the signature at the beginning which is the "dir\00dir_name\00"
     file_out.write(ALG_NAME)
     file_out.write(chr(0))
     file_out.write(os.path.basename(dir_name))    
     file_out.write(chr(0))
-#    number_of_items = len(os.path.listdir(dir_name))
-#    file_out.write(struct.pack("I", number_of_items))
     
+    # add all of the sub-files into file_out too
     for f in os.listdir(dir_name) :
         f = os.path.join(dir_name, f)
          
+        # if it's a directory, concatenate that first into a single file, then append it to concat_add
         if os.path.isdir(f) : 
             name = helpers.free_name(f + DEWK)
             file_inner = open(name, "w")
@@ -67,31 +83,45 @@ def concat_files(dir_name, file_out) :
         else : # f is a file
             concat_add(f, file_out)            
     
-    compressed_dir = file_out.name
-    
-    return compressed_dir
-            
+    return file_out.name
+
+# concat_add appends file to the end of file_out            
 def concat_add(f_name, file_out) : 
     s_helpers.check_file(f_name) 
     
+    # appends signature "file_name\x00file_size"
     file_out.write(os.path.basename(f_name))
-    file_out.write(chr(0))
-    
+    file_out.write(chr(0))    
     size = helpers.size(f_name)
     file_out.write(struct.pack("I", size))
+
+    # copy file over
     copy = open(f_name, 'rb')
     shutil.copyfileobj(copy, file_out)
     copy.close()
 
 ### DECOMPRESS ###
 def decompress(compressed_name) : 
-
+    s_helpers.check_file(compressed_name)
+    
+    s_helpers.print_double_line()
+    print "DECOMPRESSING DIRECTORY: \"" + compressed_name + "\" " 
+    print "Size: " + str(os.path.getsize(compressed_name)) + " bytes"
+    s_helpers.print_double_line()
+    
     compressed_file = open(compressed_name, "r") 
     path = os.path.dirname(compressed_name)
     
+    # unpacks the directory tree from .dewk
     dir_name = unpack(path, compressed_file)     
 
+    # then decompresses each individual file
     _dc_individuals(dir_name, "decompress")
+
+    s_helpers.print_double_line()
+    print "DIRECTORY DECOMPRESSED TO: \"" + dir_name + "\" "
+    print "Size: " + str(dir_size(dir_name)) + " bytes"
+    s_helpers.print_double_line()
 
     return dir_name
 
@@ -99,15 +129,18 @@ def decompress(compressed_name) :
 def unpack(path, compressed_file) : 
     token = s_helpers.read_until(chr(0), compressed_file)
     
+    # asserts that the token is dir
     if token != ALG_NAME : 
         raise TypeError(compressed_file.name + " is not a compressed directory")
     
+    # makes the directory that it should be called
     basename = s_helpers.read_until(chr(0), compressed_file)
-    dir_name = s_helpers.free_dir_name(os.path.join(path, basename))
-        
-    subprocess.call(["mkdir", dir_name])
+    dir_name = s_helpers.free_dir_name(os.path.join(path, basename))    
+    os.mkdir(dir_name)
+
     is_eof = False 
     
+    # read until the end_of_file
     while (not is_eof) : 
     
         try : 
@@ -115,10 +148,12 @@ def unpack(path, compressed_file) :
             file_basename = s_helpers.read_until(chr(0), compressed_file)
             file_name = os.path.join(dir_name, file_basename)
 
+        # RuntimeError indicates it's at the end of file
         except RuntimeError : 
             
             is_eof = True 
         
+        # break the old file into the new file
         else : 
             tmp = struct.unpack("I", compressed_file.read(4)) # 4 is the size of an unsigned int
             size = tmp[0]
@@ -126,6 +161,7 @@ def unpack(path, compressed_file) :
             file_out.write(compressed_file.read(size))
             file_out.close () 
 
+    # if any of the items are directories, unpack them
     for file_name in os.listdir(dir_name) : 
         file_name = os.path.join(dir_name, file_name) 
         
@@ -137,9 +173,8 @@ def unpack(path, compressed_file) :
         except TypeError : 
             f.close() 
     
-    to_del = compressed_file.name            
     compressed_file.close()
-    os.remove(to_del)
+    os.remove(compressed_file.name)
     return dir_name
             
 # dc_individuals either decompresses or compresses all of the directories
@@ -150,16 +185,34 @@ def _dc_individuals(dir_name, mode) :
 
     items = os.listdir(dir_name) 
     
+    # go through all directories and items recursively, decompressing or compressing them
     for item in items : 
         name = os.path.join(dir_name, item)
+
         if os.path.isdir(name) : 
             _dc_individuals(name, mode)
+
         else : 
             if compress :         
                 new_name = super.compress(name)
-                print "Running compression: " + name + " ||>| " + new_name + "..."            
+
             elif decompress : 
                 new_name = super.decompress(name) 
-                print "Running decompression: " + name + " |>|| " + new_name + "..."
+
             else : 
                 raise TypeError("dir.py : dc_individuals has incorrect [mode]")
+
+# dir_size returns the size of the directory with all sub-files
+def dir_size(dir_name) : 
+    s_helpers.check_dir(dir_name) 
+    total_size = 0 
+    
+    for f in os.listdir(dir_name) : 
+        f = os.path.join(dir_name, f)
+        
+        if os.path.isdir(f) : 
+            total_size += dir_size(f)
+        else : 
+            total_size += os.path.getsize(f)
+    
+    return total_size
