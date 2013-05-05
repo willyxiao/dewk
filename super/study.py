@@ -51,9 +51,9 @@ def best_alg(file_name):
             best_alg = algos[alg_name]
             best_alg_name = alg_name
     
-    print "\nDone Estimating. Results : \n"
+    print "\nDone Estimating. Results :"
     print "Best Algorithm: " + best_alg_name
-    print "Estimated Size: " + str(best_estimate)
+    print "Estimated Size: " + str(best_estimate) +"\n"
 
     # return the best algorithm
     return best_alg

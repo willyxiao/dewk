@@ -205,7 +205,15 @@ def estimate(file_name) :
 
     # build dictionary
     codes = _add_codes(_build_tree(freq_list),{},'')
-        
+
+    new_freq_list = []
+
+    if helpers.freq_list_sample_ratio(file_name) != 1 : 
+        for pair in freq_list : 
+            (freq, val) = pair
+            new_freq_list.append((freq * helpers.freq_list_sample_ratio(file_name), val))    
+        freq_list = new_freq_list
+
     # find total bits in first compressed sample_size bytes
     total_bits = 0
     for pair in freq_list:
@@ -213,7 +221,6 @@ def estimate(file_name) :
         total_bits += freq * len(codes[val])
         
     header_size = len(freq_list) * 5
-        
     total_bytes = 2*BYTE_SIZE + header_size + total_bits / BYTE_SIZE     
 
     return total_bytes  

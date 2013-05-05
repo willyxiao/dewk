@@ -120,7 +120,7 @@ def which_alg(file_name) :
     return alg_name
         
 # sample size of the frequency list
-sample_size = 2000
+sample_size = 5000
 
 # returns a frequency list of all the bytes in a file,
 # the "specific" mode also appends a decimal value to the 
@@ -172,8 +172,7 @@ import time
 # compiles the c programs
 def compile_c() : 
     subprocess.call(["clang", "-o", abs_path("reader"), abs_path("reader.c")])
-    subprocess.call(["clang", "-o", abs_path("reader"), abs_path("reader.c")])
-    time.sleep(1)
+    subprocess.call(["clang", "-o", abs_path("writer"), abs_path("writer.c")])
     
 # start_compress returns a file that python can read from and another it can write to
 def start_compress(file_in_name, alg_name) : 
@@ -192,6 +191,7 @@ def end_compress(file_in,file_out) :
         subprocess.call([abs_path("writer"), file_out.name, result, "e"])
     except OSError: 
         compile_c()
+        subprocess.call([abs_path("writer"), file_out.name, result, "e"])
     finally : 
         os.remove(file_out.name)
         return result
@@ -212,6 +212,7 @@ def start_decompress(file_name, alg_name) :
       subprocess.call([abs_path("reader"), file_name, tmp_name, "e"])  
   except OSError : 
       compile_c()
+      subprocess.call([abs_path("reader"), file_name, tmp_name, "e"])        
   finally : 
     
   
@@ -239,6 +240,7 @@ def end_decompress(file_in, file_out) :
         subprocess.call([abs_path("writer"), file_out.name, output, "no"])
     except OSError : 
         compile_c()
+        subprocess.call([abs_path("writer"), file_out.name, output, "no"])
     finally : 
         os.remove(file_in.name)
         os.remove(file_out.name)
@@ -298,7 +300,7 @@ def write_string(file_out, string) :
         file_out.write(byte)
 
 # estimate_cr estimates for any function where compression ratio is relative to sample : file_size
-def estimate_cr(file_name, compress_fun, rel_fun, sample_size) : 
+def estimate_cr(file_name, compress_fun, rel_fun, sample_s) : 
 
     # is_bigger finds if sample size is greater than file size
     is_bigger = False 
@@ -308,13 +310,13 @@ def estimate_cr(file_name, compress_fun, rel_fun, sample_size) :
     original_size = os.path.getsize(file_name) 
     
     # if the file size is bigger than the sample make a temporary file that's the size of sample_size
-    if os.path.getsize(file_name) > sample_size : 
+    if os.path.getsize(file_name) > sample_s : 
         is_bigger = True 
 
         file_in = open(file_name, "r") 
 
         tmp = open(free_name(file_name), "w") 
-        tmp.write(file_in.read(sample_size))         
+        tmp.write(file_in.read(sample_s))         
 
         file_in.close()
         tmp.close()
@@ -331,8 +333,8 @@ def estimate_cr(file_name, compress_fun, rel_fun, sample_size) :
 
         # if there was a temporary file, run the relative function on the size_ratio to 
         # find the compression rati, then multiply original_size by that estimate
-        compress_ratio = float(size) / sample_size
-        size_ratio = float(original_size) / sample_size
+        compress_ratio = float(size) / sample_s
+        size_ratio = float(original_size) / sample_s
         compress_ratio -= rel_fun(size_ratio) / 100 
         size = compress_ratio * original_size
     
