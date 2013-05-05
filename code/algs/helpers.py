@@ -11,40 +11,60 @@ Also helps standardize everything.
 INTERFACE:
 
     # signatures
-    ensign(file_name, alg_name) -> new_file_name (*to write*), signature (*to append at the front*)
-    unsign(file_name) -> algorithm_name (* used to uncompress *), new_file_name (* to uncompress to *)
+    ensign(file_name, alg_name) -> new_file_name (*to write*), 
+        signature (*to append at the front*)
+    unsign(file_name) -> algorithm_name (* used to uncompress *), 
+        new_file_name (* to uncompress to *)
     which_alg(compressed_file_name) -> name of compression algorithm used
 
     # frequency lists and samplings
     freq_list(file_name, mode) -> 
         3 modes : 
             | "sample" -> freq_list for the first sample_size bytes
-            | "specific" -> freq_list for all the bytes with decimal representation of the ascii-value of the byte
+            | "specific" -> 
+                freq_list for all the bytes with decimal representation 
+                of the ascii-value of the byte
             | _ -> freq_list for all the bytes
-    freq_list_sample_size(file_name) -> sample_size (* either the size of the file if it's smaller than sample size or sample size *)
-    freq_list_sample_ratio(file_name) -> ratio of the whole file to the sample size
+    freq_list_sample_size(file_name) -> 
+        sample_size (* either the size of the file if it's 
+                    smaller than sample size or sample size *)
+    freq_list_sample_ratio(file_name) -> 
+        ratio of the whole file to the sample size
         
-    # NOTE: when compressing files, file_out for start_compress should receive a string of ascii-characters 1's and 0's. This was done to 
-    # avoid python's error with writing anything not in range 0 - 128. End compress converts that to bits. 
-    # start_decompress is the same except decompress's read-in file is also a string of 1's and 0's
-    start_compress(file_name, alg_name) -> file_in (opened file to read from), file_out (file to write strings of 1's and 0's to)
-    end_compress(file_in, file_out) -> name of compressed file (will convert file_out to bits)
+    # NOTE: when compressing files, file_out for start_compress should receive
+    #  a string of ascii-characters 1's and 0's. This was done to 
+    # avoid python's error with writing anything not in range 0 - 128. 
+    # End compress converts that to bits. 
+    # start_decompress is the same except decompress's 
+    # read-in file is also a string of 1's and 0's
+    start_compress(file_name, alg_name) -> 
+        file_in (opened file to read from), 
+        file_out (file to write strings of 1's and 0's to)
+    end_compress(file_in, file_out) -> 
+        name of compressed file (will convert file_out to bits)
     
-    start_decompress(file_name, alg_name) -> file_in (opened file to read from : string's of 1's and 0's), file_out
-    end_decompress(file_in, file_out) -> name of decompressed file (will convert file_out to bits)
+    start_decompress(file_name, alg_name) -> 
+        file_in (opened file to read from : string's of 1's and 0's), file_out
+    end_decompress(file_in, file_out) -> 
+        name of decompressed file (will convert file_out to bits)
     
     # file / system functions
-    free_name(file_name) -> file_name that is free (so as to not overwrite anything)
+    free_name(file_name) -> 
+        file_name that is free (so as to not overwrite anything)
     size(file_name) -> number of bytes in file_name
     abs_path(file_name) -> returns the absolute os path from the file_name
     inverse_dict(dic) -> returns a dictionary with keys and values flipped
 
     # file writing functions    
-    to_bin(int, size_of_bin) -> binary representation of int with size_of_bin width
-    write_string(file_out, string) -> writes the string as 1's and 0's to file
+    to_bin(int, size_of_bin) -> 
+        binary representation of int with size_of_bin width
+    write_string(file_out, string) -> 
+        writes the string as 1's and 0's to file
 
-    # abstraction for estimate where compression ratio is relative to the sample : file_size ratio
-    estimate_cr(file_name, algorithm, rel_function, sample_size) -> estimate size for file_name
+    # abstraction for estimate where compression ratio is relative 
+        to the sample : file_size ratio
+    estimate_cr(file_name, algorithm, rel_function, sample_size) -> 
+        estimate size for file_name
 
 """
 import string
@@ -57,7 +77,8 @@ TOO_MUCH = 100
 READ_IN_SIZE = 1
 BYTE_SIZE = 8
 
-# ensign(file_name, alg_name) returns the signature for the algorithm and file type, and a new file name
+# ensign(file_name, alg_name) returns the signature for the 
+# algorithm and file type, and a new file name
 def ensign(file_name, alg_name) : 
 
     # the extension (e.g. "picture.jpg" becomes jpg)
@@ -136,7 +157,8 @@ def freq_list(file_in, mode) :
     byte = f.read(READ_IN_SIZE)
 
     # reads through the file, adding one to the frequency
-    # of each byte read, if the mode is to sample, then only the first 500 bytes are returned
+    # of each byte read, if the mode is to sample, then only 
+    # the first 500 bytes are returned
     counter = 0
 
     while (byte != ''):
@@ -178,7 +200,8 @@ def compile_c() :
     subprocess.call(["clang", "-o", abs_path("reader"), abs_path("reader.c")])
     subprocess.call(["clang", "-o", abs_path("writer"), abs_path("writer.c")])
     
-# start_compress returns a file that python can read from and another it can write to
+# start_compress returns a file that python can read from
+# and another it can write to
 def start_compress(file_in_name, alg_name) : 
     (file_out_name, sign) = ensign(file_in_name, alg_name)  
     file_out = open(free_name(file_out_name), "w") 
@@ -186,7 +209,8 @@ def start_compress(file_in_name, alg_name) :
     file_in = open(file_in_name, "r")
     return (file_in,file_out)
 
-# end_compress closes the files and calls the writer on the intermediate file, writes the result to disk
+# end_compress closes the files and calls the writer on the intermediate file,
+# writes the result to disk
 def end_compress(file_in,file_out) : 
     file_in.close()
     file_out.close()
@@ -201,8 +225,8 @@ def end_compress(file_in,file_out) :
         os.remove(file_out.name)
         return result
 
-# start_decompress returns a file that can be read in, one that can be string'd to, 
-# and another name for the final output file
+# start_decompress returns a file that can be read in, one that 
+# can be string'd to, and another name for the final output file
 def start_decompress(file_name, alg_name) : 
   #get the signature and creat the temporary file name
   (alg, new_file_name) = unsign(file_name); 
@@ -268,7 +292,8 @@ def free_name(name) :
 def size(file_name) : 
     return os.path.getsize(file_name)
 
-# returns the absolute path of a file/script inside the same directory as helpers
+# returns the absolute path of a file/script inside 
+# the same directory as helpers
 def abs_path(file_name) : 
     path = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(path, file_name) 
@@ -304,7 +329,8 @@ def write_string(file_out, string) :
         byte = to_bin(ord(n), BYTE_SIZE)
         file_out.write(byte)
 
-# estimate_cr estimates for any function where compression ratio is relative to sample : file_size
+# estimate_cr estimates for any function where compression 
+# ratio is relative to sample : file_size
 def estimate_cr(file_name, compress_fun, rel_fun, sample_s) : 
 
     # is_bigger finds if sample size is greater than file size
@@ -314,7 +340,8 @@ def estimate_cr(file_name, compress_fun, rel_fun, sample_s) :
     to_compress_name = file_name
     original_size = os.path.getsize(file_name) 
     
-    # if the file size is bigger than the sample make a temporary file that's the size of sample_size
+    # if the file size is bigger than the sample make a temporary file
+    #  that's the size of sample_size
     if os.path.getsize(file_name) > sample_s : 
         is_bigger = True 
 
@@ -336,8 +363,9 @@ def estimate_cr(file_name, compress_fun, rel_fun, sample_s) :
     if is_bigger : 
         os.remove(to_compress_name) 
 
-        # if there was a temporary file, run the relative function on the size_ratio to 
-        # find the compression rati, then multiply original_size by that estimate
+        # if there was a temporary file, run the relative function on the 
+        # size_ratio to find the compression rati, then multiply 
+        # original_size by that estimate
         compress_ratio = float(size) / sample_s
         size_ratio = float(original_size) / sample_s
         compress_ratio -= rel_fun(size_ratio) / 100 

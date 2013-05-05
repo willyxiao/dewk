@@ -377,6 +377,10 @@ def _encode (input) :
     sl = single_list(input)
     tl = two_list(input)
     dic = hash_it(tl)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 229add31c34e7d2498d79bb8384a11e7914fe90c
 
     replaced = []
     # when len of the file = len of the set version, there're no repetitions
