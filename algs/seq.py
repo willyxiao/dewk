@@ -80,7 +80,7 @@ def compress(file_in_name):
 def decompress(file_name):
     
     (file_in,file_out) = helpers.start_decompress(file_name, ALG_NAME)
-
+    p = file_in.tell()
     def de_bin (i) :
         if i == '0' :
             key = ''
@@ -98,7 +98,7 @@ def decompress(file_name):
         return key
 
     print "decompressing dictionary"
-    p = file_in.tell()
+
     file_in.seek(-BYTE_SIZE,2)
     insig = int(file_in.read(BYTE_SIZE),2)
     file_in.seek(-(BYTE_SIZE*6),2)
@@ -278,6 +278,7 @@ def _encode (input) :
     sl = single_list(input)
     tl = two_list(input)
     dic = hash_it(tl)
+    replaced = []
     while len(tl) > len(set(tl)) :
         replaced = replace(sl, dic)
         sl = single_list(replaced)
