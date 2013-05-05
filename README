@@ -136,7 +136,9 @@ TROUBLE_SHOOTING :
             
             Also you might just forget about compressing test_dir.dewk and go 
             immediately to steps 3 - 4 substituting in your own files and 
-            directories (make backups!) instead of test_dir       
+            directories (make backups!) instead of test_dir
+            
+            Anything else go to TROUBLE_SHOOTING(3)        
 
     (2) - 
         seq doesn't work too well on anything other than .txt files. 
