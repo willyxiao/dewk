@@ -1,1 +1,1 @@
-__all__ = [ "fib","huff","none","helpers"]
+__all__ = [ "fib","huff","lzw", "seq", "none","helpers"]
