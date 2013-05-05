@@ -1,0 +1,156 @@
+README
+    DEWK Compression
+    David Herman, Eamon Obrien, Willy Xiao, Kevin Eskici
+
+    Note: This is tested for Macs and the CS50 Appliance. If you have a windows computer, 
+        feel free to try these initial instructions, but there's a chance that it
+        doesn't work.     
+
+INIITAL INSTRUCTIONS FOR CODE : 
+
+    If you don't have clang (even if you do have clang, this is suggested but not necessary) : 
+    
+        STEP 0 - Compile code : 
+            cd code/algs
+            ls -l 
+
+            (* you will see in here reader.c and writer.c. Compile those files with any c99 compiler 
+                to the executables with names "reader" and "writer" respectively *)
+            
+            (*for example:
+            clang -o reader reader.c
+            clang -o writer writer.c *)
+
+            ls -l 
+            
+            (*you should see : 
+                __init__.py
+                fib.py
+                helpers.py
+                huff.py
+                lzw.py
+                none.py
+                reader
+                reader.c
+                seq.py
+                writer
+                writer.c*)
+
+    Do the following : 
+    
+        STEP 1 - Command Line: 
+            cd super
+            python
+        
+        STEP 2 - Python Top-Level: 
+            >>> import dir
+            >>> dir.decompress("../test_dir.dewk") 
+            >>> quit()
+        
+            (* this should decompress the .dewk file, which is a directory including a number of files we can test on *) 
+            ERRORS JUMP TO : TROUBLE-SHOOTING (1) 
+       
+        STEP 3 - Command Line : 
+            cd .. 
+            ls -l 
+            
+            (* you should now see a test_dir directory, you should be able to play around with this directory...*)
+        
+        STEP 4 - Explore ! : 
+            (* Feel free to explore the code now. Everything you run to compress to decompress should 
+                either be super.compress, super.decompress, or dir.compress and dir.decompress *) 
+            
+            Potential Explorations : 
+                A) Run our tests : 
+                    cd code/super
+                    python test.py ../test_dir/blah.txt ../test_dir
+                    (* note any format of the following will work : 
+                        python test.py name_of_any_file name_of_any_directory *)
+                
+                B) Try super-compressor : 
+                    cd code/super
+                    python
+                    >>> import super
+                    >>> compressed = super.compress("../test_dir/blah.txt")
+                        (* you can now see the compressed file on disk...*)
+                        (* to decompress, see below *)
+                    >>> super.decompress(compressed) 
+
+                C) Try the directory-compressor : 
+                    cd code/super
+                    python
+                    >>> import dir
+                    >>> compressed = dir.compress("../test_dir") 
+                    >>> dir.decompress(compressed)
+                
+                    (* you can also try our error checking. for example, 
+                        try running directory-compressor on a file or 
+                        super-compressor on a directory *)
+                        
+                D) Play around with the estimate functions : 
+                   cd code/algs
+                   python
+                   >>> import fib
+                   >>> import huff
+                   >>> import lzw
+                   >>> import seq
+                       (* substituting in any of the previously 
+                        imported items as ALG_NAME *)
+                   >>> ALG_NAME.estimate("../test_dir/blah.txt")
+                       (* note, any file_name works in place 
+                        of ../test_dir/blah.txt *)
+                
+                E) Play around with the individual compressors : 
+                    (* note, this is not suggested because it doesn't handle the 
+                        compressed and decompressed files as well, but can still be done *)
+                    (* note, you might want to test seq with this, because it's not
+                        part of super compress *)
+
+                   cd code/algs
+                   python
+                   >>> import fib
+                   >>> import huff
+                   >>> import lzw
+                   >>> import seq (* ERRORS : TROUBLE_SHOOTING(2) *)                                                 
+                   >>> ALG_NAME.decompress(ALG_NAME.compress("../test_dir/ANY_FILE_NAME"))
+                    (* these individual compressors won't delete the original file, so you 
+                        can compare the decompressed file to the compressed file *) 
+                        
+                    ERRORS : TROUBLE_SHOOTING(3)
+                     
+
+TROUBLE_SHOOTING : 
+    (1) -
+        First time coming to (1) : 
+            The most common error that occurs has to do with the reader and the writer. 
+            Most likely you can resolve this issue by going to STEP 0 and compiling the correct files. 
+            
+            If by now, you have a code/test_dir directory along with a code/test_dir.dewk, you can delete
+            the test_dir by something like "rm -f -r code/test_dir." Then you can run dir.decompress on 
+            code/test_dir.dewk 
+        
+        Second time coming to (1) : 
+            I see you're back again...awkward...Well, if you're using a MAC, you should probably just
+            give up and try running it in the appliance...it's really well tested there. 
+            
+            Also you might just forget about compressing test_dir.dewk and go immediately to steps 3 - 4 substituting
+            in your own files and directories (make backups!) instead of test_dir       
+
+    (2) - 
+        seq doesn't work too well on anything other than .txt files. Don't get too fancy with seq
+    
+    (3) - 
+        A) Paused / Stopped Running : 
+            Don't fret if it takes too long to compress / decompress! These functions all work really slowly
+            (like 15 mins on large-enough files) and some will break if the file is too big because there's 
+            not enough RAM. So, ironically, we can't actually compress any files that are too big, but feel 
+            free to try the compressors on say ... a video file. 
+        
+        B) Other error messages : 
+            See TROUBLE_SHOOTING (1) first. 
+            Not positive - give me a call at 678-551-4386 or email willy@chenxiao.us
+                
+        
+        
+        
+        
