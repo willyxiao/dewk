@@ -21,6 +21,8 @@ def compress(file_in_name):
     
     (file_in,file_out) = helpers.start_compress(file_in_name, ALG_NAME)
     
+    print "Constructing huffman tree..." 
+    
     # get frequency list
     f_list = _build_freq_list(file_in_name)
     
@@ -33,6 +35,9 @@ def compress(file_in_name):
         
     # get dictionary of codes for given bytes
     codes = _add_codes(_build_tree(f_list),{},'')
+    
+    print "Done!"
+    print "Writing codes..." 
     
     # read the first integer into file
     i = file_in.read(READ_IN_SIZE)
@@ -85,7 +90,10 @@ def decompress(file_name):
 
     header_left = int(i,2) + 1
     header_left_original = header_left
-
+    
+    print "Constructing huffman tree ...."
+    
+    # get frequency list from header
     freq_list = [] 
     while (header_left > 0):
         freq = int(file_in.read(4*BYTE_SIZE),2)
@@ -96,6 +104,9 @@ def decompress(file_name):
         
     # get dictionary of codes for given bytes
     codes = _add_codes(_build_tree(freq_list),{},'')
+    
+    print "Done!"
+    print "Writing file ..."
     
     # flip dictionary 
     inv_codes = helpers.inverse_dict(codes)
