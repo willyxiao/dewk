@@ -49,3 +49,9 @@ def free_dir_name(dir_name) :
         counter += 1
    
     return new_name
+
+def print_single_line() : 
+    print "-------------------------" 
+    
+def print_double_line() : 
+    print "=========================="

@@ -34,7 +34,9 @@ def best_alg(file_name):
  
     # for testing
     alg_name = random.choice(algos.keys())
-    best_alg = algos[alg_name]   
+    best_alg = algos[alg_name]
+    best_estimate = best_alg.estimate(file_name)   
+ 
     # initialize the best algorithm to none
 #    best_estimate = algs.none.estimate(file_name)
 #    best_alg = algs.none
@@ -46,6 +48,9 @@ def best_alg(file_name):
 #            best_estimate = estimate
 #            best_alg = algos[alg_name]
     
+    print "Best Algorithm: " + alg_name
+    print "Estimated Size: " + str(best_estimate)
+
     # return the best algorithm
     return best_alg
 
@@ -53,4 +58,5 @@ def best_alg(file_name):
 # file_name must be the name of a compressed file
 def get_alg(file_name): 
     alg_name = algs.helpers.which_alg(file_name)
+    print "Algorithm Used: " + alg_name
     return algos[alg_name]
