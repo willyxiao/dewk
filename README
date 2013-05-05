@@ -6,6 +6,8 @@ README
         feel free to try these initial instructions, but there's a chance that it
         doesn't work.     
 
+    Requirements : Python, C - Compiler
+
 INIITAL INSTRUCTIONS FOR CODE : 
 
     If you don't have clang (even if you do have clang, this is suggested but not necessary) : 
