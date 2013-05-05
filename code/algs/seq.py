@@ -13,13 +13,8 @@ http://sequitur.info/
 2. seq.decompress takes in a file outputting FileName.FileType to disk. 
 """
 
-import unittest 
 import helpers
-import io
-import subprocess
 import string
-import pickle
-import json
 import os
  
 ALG_NAME = "seq"
@@ -146,17 +141,16 @@ def decompress(file_name):
         # return decoded element
         return key
 
-    print "decompressing dictionary"
-
-    file_in.seek(-BYTE_SIZE,2)
-    insig = int(file_in.read(BYTE_SIZE),2)
-    file_in.seek(-(BYTE_SIZE*6),2)
-    s = file_in.read((BYTE_SIZE*5)-insig)
-
     # find and remove any padding at end of file
     p = file_in.tell()
+    file_in.seek(-BYTE_SIZE,2)
+    insig = int(file_in.read(BYTE_SIZE),2)
 
-
+    # find length of dictionary
+    file_in.seek(-(BYTE_SIZE*6),2)
+    s = file_in.read((BYTE_SIZE*5)-insig)
+    dict_size = int(s,2)
+    file_in.seek(p,0)
 
     # find length of dictionary
     file_in.seek(-(BYTE_SIZE*5),2)
@@ -383,13 +377,9 @@ def _encode (input) :
     sl = single_list(input)
     tl = two_list(input)
     dic = hash_it(tl)
-<<<<<<< HEAD
-    replaced = []
-=======
 
     replaced = []
     # when len of the file = len of the set version, there're no repetitions
->>>>>>> fe47a4b1bb08c3a69727594bcdc83927ae848a33
     while len(tl) > len(set(tl)) :
         replaced = replace(sl, dic)
         sl = single_list(replaced)

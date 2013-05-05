@@ -78,17 +78,17 @@ def ensign(file_name, alg_name) :
 # unsign(file_name) returns the compression algorithm used and a name of an
 # uncompressed file that can be saved to disk
 def unsign(file_name) : 
-    file = open(file_name, "r")
+    file_in = open(file_name, "r")
 
     counter = 0 
     alg_name = "" 
     extension_name = ""
 
     # for the name of the algorithm
-    i = file.read(1)
+    i = file_in.read(1)
     while i != ZERO : 
         alg_name += i 
-        i = file.read(1)
+        i = file_in.read(1)
 
         # this checks if counter goes over the amount before giving up
         counter += counter
@@ -97,16 +97,18 @@ def unsign(file_name) :
             break
     
     # for the name of the extension
-    i = file.read(1)
+    i = file_in.read(1)
     while i != ZERO : 
         extension_name += i
-        i = file.read(1)
+        i = file_in.read(1)
 
         counter += counter
         if counter > TOO_MUCH :
             raise TypeError("File is not of type dewk compressed_file")
             break
             
+    file_in.close()
+
     # new file name
     period_at = string.rfind(file_name, "."); 
             
@@ -128,7 +130,8 @@ sample_size = 5000
 def freq_list(file_in, mode) : 
 
     # initialize file, empty dictionary, and first byte
-    f = io.FileIO(file_in, "r")
+#HERE!
+    f = open(file_in, "r")
     freq_dict = {}
     byte = f.read(READ_IN_SIZE)
 
@@ -153,7 +156,8 @@ def freq_list(file_in, mode) :
     freq_list = []        
     for key in freq_dict:
         freq_list.append((freq_dict[key],key))
-        
+    
+    f.close()
     return freq_list
 
 # allows users outside module to access sample size
@@ -177,9 +181,9 @@ def compile_c() :
 # start_compress returns a file that python can read from and another it can write to
 def start_compress(file_in_name, alg_name) : 
     (file_out_name, sign) = ensign(file_in_name, alg_name)  
-    file_out = io.open(free_name(file_out_name), "wb") 
+    file_out = open(free_name(file_out_name), "w") 
     file_out.write(sign)
-    file_in = io.FileIO(file_in_name, "r")
+    file_in = open(file_in_name, "r")
     return (file_in,file_out)
 
 # end_compress closes the files and calls the writer on the intermediate file, writes the result to disk
@@ -190,6 +194,7 @@ def end_compress(file_in,file_out) :
     try : 
         subprocess.call([abs_path("writer"), file_out.name, result, "e"])
     except OSError: 
+        print "Attempt failed...recompiling reader and writer"
         compile_c()
         subprocess.call([abs_path("writer"), file_out.name, result, "e"])
     finally : 
@@ -211,11 +216,10 @@ def start_decompress(file_name, alg_name) :
   try : 
       subprocess.call([abs_path("reader"), file_name, tmp_name, "e"])  
   except OSError : 
+      print "Attempt failed...recompiling reader and writer"
       compile_c()
-      subprocess.call([abs_path("reader"), file_name, tmp_name, "e"])        
+      subprocess.call([abs_path("reader"), file_name, tmp_name, "e"])
   finally : 
-    
-  
       file_out = open(tmp_name2, "w")
       file_in = open(tmp_name, "r") 
   
@@ -239,6 +243,7 @@ def end_decompress(file_in, file_out) :
     try : 
         subprocess.call([abs_path("writer"), file_out.name, output, "no"])
     except OSError : 
+        print "Attempt failed...recompiling reader and writer"
         compile_c()
         subprocess.call([abs_path("writer"), file_out.name, output, "no"])
     finally : 

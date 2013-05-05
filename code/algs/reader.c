@@ -39,12 +39,14 @@ int main(int argc, char* argv[])
     {
         printf("reader.c 30 \nCould not read file: %s\n", argv[1]);
         fclose(file_write); 
+        fclose(file_read);
         return 1;
     }
     else if (file_write == NULL)
     {
         printf("reader.c 46 \nCould not write file: %s\n", argv[2]); 
-        fclose(file_read); 
+        fclose(file_read);
+        fclose(file_write);  
         return 1; 
     }
     

@@ -142,7 +142,8 @@ TROUBLE_SHOOTING :
 
     (2) - 
         seq doesn't work too well on anything other than .txt files. 
-        Don't get too fancy with seq...it might just not work...
+        Don't get too fancy with seq...also seq seems to only work once, and then 
+        hangs the second time...not sure what the problem is
     
     (3) - 
         A) Paused / Stopped Running : 
