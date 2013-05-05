@@ -181,7 +181,7 @@ def estimate (file_name) :
     file_in = open(file_name, "r")
     sample_size = 2000
     file_size = os.path.getsize(file_name)
-    if file_size > 100000 :
+    if file_size > 500000 :
         return file_size + 1
     if file_size <= sample_size :
         input = file_in.read()
