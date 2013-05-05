@@ -7,7 +7,8 @@ lzw.py by Willy Xiao, Kevin Eskici, Eamon Obrien
 
 lzw pseudo-code for compression: 
 
-    initialize a code dictionary to contain all the ascii integer-values of the characters
+    initialize a code dictionary to contain all the ascii 
+        integer-values of the characters
     initialize integer to 256
     initialize a string to '' 
     read a byte, attach the byte to the end of the string : 
@@ -35,7 +36,8 @@ def compress(file_in_name):
     
     (file_in,file_out) = helpers.start_compress(file_in_name, ALG_NAME)
 
-    # initialize the file_in position, this is needed because file_in might not be "pure"
+    # initialize the file_in position, this is needed because 
+    # file_in might not be "pure"
     init_pos = file_in.tell() # start of file (will need later)
 
     # STEP 1 : Create the code dictionary
@@ -82,7 +84,8 @@ def decompress(file_name):
         # write out current string
         helpers.write_string(file_out, string)
 
-        # file_in.read might return '' in which case from_bin won't work, break the loop in that case
+        # file_in.read might return '' in which case from_bin won't work, 
+        # break the loop in that case
         try : 
             # read next integer from file
             b = file_in.read(size)
@@ -93,7 +96,8 @@ def decompress(file_name):
         # otherwise continue with decoding
         else :        
 
-            # create new string (if n is not yet in codes, that means there's repetition
+            # create new string (if n is not yet in codes, 
+            # that means there's repetition
             if (n in codes) : 
                 string += codes[n][:1]
             else : 
@@ -150,11 +154,12 @@ def _compress_run (file_in, file_out, bit_len, mode) :
     
     return counter
 
+
+
+### ESTIMATE ###
 sample_size = 5000
 import math
 
-### ESTIMATE ###
 def estimate(file_name) : 
     # assuming compression ratio gets better by log( size of file / sample size) 
-    return helpers.estimate_cr(file_name, compress, 
-        math.log, sample_size)
+    return helpers.estimate_cr(file_name, compress, math.log, sample_size)
