@@ -71,7 +71,7 @@ def test_all(test_file_name, test_dir_name) :
     
     print "All tests passed! Yay!"  
 
-# prints a message with a delay
+# prints a message with a 2s delay
 def print_with_sleep(message) : 
     s_helpers.print_single_line()
     print message
