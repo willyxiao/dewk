@@ -109,20 +109,38 @@ def decompress(compressed_name) :
     print "Size: " + str(os.path.getsize(compressed_name)) + " bytes"
     s_helpers.print_double_line()
     
-    compressed_file = open(compressed_name, "r") 
-    path = os.path.dirname(compressed_name)
+    backup = s_helpers.free_dir_name(compressed_name)
+    shutil.copyfile(compressed_name, backup)
+
+    try : 
+        compressed_file = open(compressed_name, "r") 
+        path = os.path.dirname(compressed_name)
+        
+        # unpacks the directory tree from .dewk
+        dir_name = unpack(path, compressed_file)     
+
+        # then decompresses each individual file
+        _dc_individuals(dir_name, "decompress")
+
+        s_helpers.print_double_line()
+        print "DIRECTORY DECOMPRESSED TO: \"" + dir_name + "\" "
+        print "Size: " + str(dir_size(dir_name)) + " bytes"
+        s_helpers.print_double_line()
     
-    # unpacks the directory tree from .dewk
-    dir_name = unpack(path, compressed_file)     
+    except : 
+        try : 
+            os.rename(backup, compressed_name) 
+        except OSError: 
+            if os.path.exists(backup) : 
+                os.remove(compressed_name) 
+                os.rename(backup, compressed_name) 
+                os.remove(backup)
+        else :
+            raise
 
-    # then decompresses each individual file
-    _dc_individuals(dir_name, "decompress")
-
-    s_helpers.print_double_line()
-    print "DIRECTORY DECOMPRESSED TO: \"" + dir_name + "\" "
-    print "Size: " + str(dir_size(dir_name)) + " bytes"
-    s_helpers.print_double_line()
-
+    else :  
+        os.remove(backup)         
+        
     return dir_name
 
 # unpack(path, compressed_file) unpacks the directory tree from the .dewk file
