@@ -38,7 +38,9 @@ def compress(file_in_name):
     init_pos = file_in.tell() # start of file (will need later)
 
     # STEP 1 : Create the code dictionary
+    print "Creating codes..."
     counter = _compress_run(file_in, file_out, 0, "none")
+    print "Done!"
 
     # STEP 2 : Write out the length that each int will need
     # bit_len is the length required to represent each integer
@@ -51,7 +53,9 @@ def compress(file_in_name):
     file_in.seek(init_pos, 0)
     
     # STEP 3 : Run again, writing out codes for the file
+    print "Writing codes..."
     _compress_run(file_in, file_out, bit_len, "write")
+    print "Done!"
     
     return helpers.end_compress(file_in,file_out)
 
@@ -146,12 +150,10 @@ def _compress_run (file_in, file_out, bit_len, mode) :
     return counter
 
 sample_size = 5000
-
-import os
 import math
 
 ### ESTIMATE ###
 def estimate(file_name) : 
+    # assuming compression ratio gets better by log( size of file / sample size) 
     return helpers.estimate_cr(file_name, compress, 
         math.log, sample_size)
-
